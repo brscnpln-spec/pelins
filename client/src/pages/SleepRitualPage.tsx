@@ -5,8 +5,7 @@ import ProgressBar from "@/components/ProgressBar";
 import CelebrationOverlay from "@/components/CelebrationOverlay";
 import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function ToothbrushIcon() {
   return (
@@ -73,10 +72,7 @@ function PajamasIcon() {
 
 function MoonIcon({ className }: { className?: string }) {
   return (
-    <svg 
-      viewBox="0 0 60 60" 
-      className={className}
-    >
+    <svg viewBox="0 0 60 60" className={className}>
       <path
         d="M45 30c0-10-8-18-18-18 2 4 3 8 3 13 0 12-10 22-22 22 4 6 11 10 19 10 12 0 18-10 18-27z"
         fill="#FDE047"
@@ -145,14 +141,19 @@ interface RitualStatusResponse {
 
 export default function SleepRitualPage() {
   const [showCelebration, setShowCelebration] = useState(false);
+  const [localCompleted, setLocalCompleted] = useState<Set<string>>(new Set());
   const today = new Date().toISOString().split("T")[0];
 
   const { data: status, isLoading } = useQuery<RitualStatusResponse>({
     queryKey: [`/api/ritual/status?date=${today}`],
-    refetchInterval: 10000,
+    staleTime: 60000,
   });
 
-  const completedSteps = new Set(status?.completedSteps || []);
+  useEffect(() => {
+    if (status?.completedSteps) {
+      setLocalCompleted(new Set(status.completedSteps));
+    }
+  }, [status?.completedSteps]);
 
   const completeMutation = useMutation({
     mutationFn: async (step: string) => {
@@ -160,9 +161,8 @@ export default function SleepRitualPage() {
       return res.json();
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/ritual/status"] });
       if (data.allDone) {
-        setTimeout(() => setShowCelebration(true), 500);
+        setTimeout(() => setShowCelebration(true), 300);
       }
     },
   });
@@ -171,16 +171,23 @@ export default function SleepRitualPage() {
     mutationFn: async () => {
       await apiRequest("POST", "/api/ritual/reset", { date: today });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/ritual/status"] });
-    },
   });
 
   const handleComplete = (step: string) => {
+    if (localCompleted.has(step)) return;
+    
+    setLocalCompleted(prev => new Set(Array.from(prev).concat(step)));
+    
+    const newCompleted = new Set(Array.from(localCompleted).concat(step));
+    if (newCompleted.size === RITUAL_STEPS.length) {
+      setTimeout(() => setShowCelebration(true), 300);
+    }
+    
     completeMutation.mutate(step);
   };
 
   const handleReset = () => {
+    setLocalCompleted(new Set());
     resetMutation.mutate();
   };
 
@@ -188,12 +195,9 @@ export default function SleepRitualPage() {
     return (
       <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-900 to-purple-900 pb-[72px]">
         <div className="flex-1 flex items-center justify-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          >
+          <div className="animate-spin">
             <MoonIcon className="w-16 h-16" />
-          </motion.div>
+          </div>
         </div>
         <BottomNav />
       </div>
@@ -227,7 +231,7 @@ export default function SleepRitualPage() {
               key={item.step}
               step={item.step}
               icon={item.icon}
-              completed={completedSteps.has(item.step)}
+              completed={localCompleted.has(item.step)}
               onComplete={() => handleComplete(item.step)}
             />
           ))}
@@ -236,33 +240,32 @@ export default function SleepRitualPage() {
         <div className="w-full max-w-md mt-8">
           <div className="flex justify-center gap-3 mb-4">
             {RITUAL_STEPS.map((item, idx) => (
-              <motion.div
+              <div
                 key={item.step}
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold ${
-                  completedSteps.has(item.step)
-                    ? "bg-emerald-400 text-white"
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold transition-all ${
+                  localCompleted.has(item.step)
+                    ? "bg-emerald-400 text-white scale-110"
                     : "bg-white/20 text-white/60 shadow"
                 }`}
-                animate={completedSteps.has(item.step) ? { scale: [1, 1.2, 1] } : {}}
               >
-                {completedSteps.has(item.step) ? (
+                {localCompleted.has(item.step) ? (
                   <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3">
                     <path d="M5 12l5 5L20 7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 ) : (
                   <span className="font-display">{idx + 1}</span>
                 )}
-              </motion.div>
+              </div>
             ))}
           </div>
-          <ProgressBar current={completedSteps.size} total={RITUAL_STEPS.length} showLabel={false} />
+          <ProgressBar current={localCompleted.size} total={RITUAL_STEPS.length} showLabel={false} />
         </div>
 
-        {completedSteps.size > 0 && (
+        {localCompleted.size > 0 && (
           <button
             onClick={handleReset}
             disabled={resetMutation.isPending}
-            className="mt-6 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shadow"
+            className="mt-6 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shadow active:scale-95 transition-transform"
             data-testid="button-reset-ritual"
           >
             <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" strokeWidth="2">
