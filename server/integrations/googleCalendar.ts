@@ -1,8 +1,39 @@
 import { google } from "googleapis";
 
 let connectionSettings: any;
+let localOAuthClient: any = null;
 
-async function getAccessToken() {
+// Check if we have local OAuth credentials
+function hasLocalCredentials(): boolean {
+  return !!(
+    process.env.GOOGLE_CLIENT_ID &&
+    process.env.GOOGLE_CLIENT_SECRET &&
+    process.env.GOOGLE_REFRESH_TOKEN
+  );
+}
+
+// Get OAuth client for local deployment
+async function getLocalOAuthClient() {
+  if (localOAuthClient) {
+    return localOAuthClient;
+  }
+
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    "http://localhost:5000/api/auth/google/callback"
+  );
+
+  oauth2Client.setCredentials({
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+  });
+
+  localOAuthClient = oauth2Client;
+  return oauth2Client;
+}
+
+// Get access token from Replit Connector (for Replit deployment)
+async function getReplitAccessToken() {
   if (
     connectionSettings &&
     connectionSettings.settings.expires_at &&
@@ -47,8 +78,14 @@ async function getAccessToken() {
 }
 
 async function getCalendarClient() {
-  const accessToken = await getAccessToken();
+  // Check for local credentials first
+  if (hasLocalCredentials()) {
+    const oauth2Client = await getLocalOAuthClient();
+    return google.calendar({ version: "v3", auth: oauth2Client });
+  }
 
+  // Fall back to Replit Connector
+  const accessToken = await getReplitAccessToken();
   const oauth2Client = new google.auth.OAuth2();
   oauth2Client.setCredentials({
     access_token: accessToken,
@@ -115,4 +152,43 @@ export async function getUpcomingEvents(days: number = 3): Promise<CalendarEvent
     console.error("Error fetching calendar events:", error);
     return [];
   }
+}
+
+// Helper to generate OAuth URL for initial setup
+export function getAuthUrl(): string {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    throw new Error("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are required");
+  }
+
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    "http://localhost:5000/api/auth/google/callback"
+  );
+
+  return oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    prompt: "consent",
+    scope: [
+      "https://www.googleapis.com/auth/calendar.readonly",
+      "https://www.googleapis.com/auth/calendar.events.readonly",
+    ],
+  });
+}
+
+// Exchange authorization code for tokens
+export async function exchangeCodeForTokens(code: string): Promise<{ refresh_token: string }> {
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    "http://localhost:5000/api/auth/google/callback"
+  );
+
+  const { tokens } = await oauth2Client.getToken(code);
+  
+  if (!tokens.refresh_token) {
+    throw new Error("No refresh token received. Make sure to revoke access and try again.");
+  }
+
+  return { refresh_token: tokens.refresh_token };
 }

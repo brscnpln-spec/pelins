@@ -265,18 +265,100 @@ pm2 logs familyhub --lines 50
 
 ---
 
-## Google Calendar Baglamak (Opsiyonel)
+## Google Calendar Baglamak
 
-Lokal kurulumda Google Calendar icin OAuth ayarlamasi gerekir:
+Lokal kurulumda Google Calendar icin OAuth ayarlamasi gerekir. Asagidaki adimlari takip edin:
 
-1. Google Cloud Console'a gidin
-2. Yeni proje olusturun
-3. Google Calendar API'yi aktive edin
-4. OAuth 2.0 kimlik bilgileri olusturun
-5. Redirect URI olarak `http://localhost:5000/api/auth/callback` ekleyin
-6. Client ID ve Secret'i `.env` dosyasina ekleyin
+### Adim A: Google Cloud Projesi Olusturma
 
-Not: Bu islem karmasik olabilir. Eger takvim ozelligine ihtiyaciniz yoksa, uygulama onsuz da calisir.
+1. https://console.cloud.google.com adresine gidin
+2. Ust menuden "Select a project" > "New Project" tiklayin
+3. Proje adi: `FamilyHub` yazin ve "Create" tiklayin
+4. Projeyi secin
+
+### Adim B: Google Calendar API'yi Aktive Etme
+
+1. Sol menuden "APIs & Services" > "Library" secin
+2. "Google Calendar API" arayin
+3. "Enable" butonuna tiklayin
+
+### Adim C: OAuth Consent Screen Ayarlama
+
+1. Sol menuden "APIs & Services" > "OAuth consent screen" secin
+2. "External" secin ve "Create" tiklayin
+3. App name: `Family Hub` yazin
+4. User support email: kendi emailinizi secin
+5. Developer contact: kendi emailinizi yazin
+6. "Save and Continue" tiklayin
+7. Scopes sayfasinda "Add or Remove Scopes" tiklayin
+8. Asagidaki scope'lari ekleyin:
+   - `https://www.googleapis.com/auth/calendar.readonly`
+   - `https://www.googleapis.com/auth/calendar.events.readonly`
+9. "Save and Continue" tiklayin
+10. Test users sayfasinda "Add Users" tiklayin ve kendi Gmail adresinizi ekleyin
+11. "Save and Continue" tiklayin
+
+### Adim D: OAuth Kimlik Bilgileri Olusturma
+
+1. Sol menuden "APIs & Services" > "Credentials" secin
+2. "Create Credentials" > "OAuth client ID" tiklayin
+3. Application type: "Web application" secin
+4. Name: `Family Hub Local` yazin
+5. "Authorized redirect URIs" bolumune ekleyin:
+   ```
+   http://localhost:5000/api/auth/google/callback
+   ```
+6. "Create" tiklayin
+7. Acilan pencerede **Client ID** ve **Client Secret** degerlerini kopyalayin
+
+### Adim E: Kimlik Bilgilerini .env Dosyasina Ekleme
+
+```bash
+nano ~/familyhub/.env
+```
+
+Asagidaki satirlari ekleyin (kendi degerlerinizle degistirin):
+
+```env
+GOOGLE_CLIENT_ID=123456789-abcdefg.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxxxx
+```
+
+Kaydedin: `Ctrl+O`, Enter, `Ctrl+X`
+
+### Adim F: Refresh Token Alma
+
+1. Uygulamayi baslatin:
+   ```bash
+   cd ~/familyhub
+   npm run dev
+   ```
+
+2. Tarayicida su adrese gidin:
+   ```
+   http://localhost:5000/api/auth/google
+   ```
+
+3. Google hesabinizla giris yapin ve izin verin
+
+4. Ekranda gosterilen **GOOGLE_REFRESH_TOKEN** degerini kopyalayin
+
+5. `.env` dosyasina ekleyin:
+   ```bash
+   nano ~/familyhub/.env
+   ```
+   
+   Ekleyin:
+   ```env
+   GOOGLE_REFRESH_TOKEN=1//0xxxxxxxxxxxxxxxxx
+   ```
+
+6. Uygulamayi yeniden baslatin:
+   ```bash
+   pm2 restart familyhub
+   ```
+
+Artik takvim etkinlikleriniz Dashboard'da gorunecek!
 
 ---
 

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { RitualStepEnum } from "@shared/schema";
-import { getUpcomingEvents } from "./integrations/googleCalendar";
+import { getUpcomingEvents, getAuthUrl, exchangeCodeForTokens } from "./integrations/googleCalendar";
 import { getWeather } from "./integrations/weather";
 import {
   triggerSleepMode,
@@ -122,6 +122,59 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error getting calendar events:", error);
       res.json({ events: [] });
+    }
+  });
+
+  // Google OAuth routes for local Raspberry Pi setup
+  app.get("/api/auth/google", (req, res) => {
+    try {
+      const authUrl = getAuthUrl();
+      res.redirect(authUrl);
+    } catch (error) {
+      res.status(500).send(`
+        <html>
+          <body style="font-family: sans-serif; padding: 40px;">
+            <h1>Google Calendar Setup</h1>
+            <p style="color: red;">Error: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in .env file</p>
+            <p>Please follow the setup instructions in RASPBERRY_PI_KURULUM.md</p>
+          </body>
+        </html>
+      `);
+    }
+  });
+
+  app.get("/api/auth/google/callback", async (req, res) => {
+    try {
+      const code = req.query.code as string;
+      if (!code) {
+        return res.status(400).send("No authorization code received");
+      }
+
+      const { refresh_token } = await exchangeCodeForTokens(code);
+      
+      res.send(`
+        <html>
+          <body style="font-family: sans-serif; padding: 40px; max-width: 800px; margin: 0 auto;">
+            <h1 style="color: green;">Google Calendar Connected!</h1>
+            <p>Add this line to your <code>.env</code> file:</p>
+            <pre style="background: #f0f0f0; padding: 20px; border-radius: 8px; overflow-x: auto;">GOOGLE_REFRESH_TOKEN=${refresh_token}</pre>
+            <p>Then restart the application:</p>
+            <pre style="background: #f0f0f0; padding: 20px; border-radius: 8px;">pm2 restart familyhub</pre>
+            <p style="margin-top: 20px;">After restarting, your calendar events will appear on the dashboard.</p>
+          </body>
+        </html>
+      `);
+    } catch (error) {
+      console.error("OAuth callback error:", error);
+      res.status(500).send(`
+        <html>
+          <body style="font-family: sans-serif; padding: 40px;">
+            <h1 style="color: red;">Error</h1>
+            <p>${error instanceof Error ? error.message : "Unknown error occurred"}</p>
+            <p><a href="/api/auth/google">Try again</a></p>
+          </body>
+        </html>
+      `);
     }
   });
 
