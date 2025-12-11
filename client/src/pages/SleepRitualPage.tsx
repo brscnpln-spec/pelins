@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import RitualStepCard from "@/components/RitualStepCard";
 import ProgressBar from "@/components/ProgressBar";
 import CelebrationOverlay from "@/components/CelebrationOverlay";
 import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 function ToothbrushIcon() {
   return (
@@ -131,41 +133,67 @@ const RITUAL_STEPS = [
   { step: "PAJAMAS" as const, icon: <PajamasIcon /> },
 ];
 
-export default function SleepRitualPage() {
-  // todo: remove mock functionality - replace with API calls
-  const [completedSteps, setCompletedSteps] = useState<Set<string>>(() => {
-    const saved = localStorage.getItem("ritualSteps");
-    const today = new Date().toISOString().split("T")[0];
-    const savedData = saved ? JSON.parse(saved) : { date: "", steps: [] };
-    if (savedData.date === today) {
-      return new Set(savedData.steps);
-    }
-    return new Set();
-  });
-  const [showCelebration, setShowCelebration] = useState(false);
+interface RitualStatusResponse {
+  date: string;
+  completedSteps: string[];
+}
 
-  useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    localStorage.setItem(
-      "ritualSteps",
-      JSON.stringify({ date: today, steps: Array.from(completedSteps) })
-    );
-  }, [completedSteps]);
+export default function SleepRitualPage() {
+  const [showCelebration, setShowCelebration] = useState(false);
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data: status, isLoading } = useQuery<RitualStatusResponse>({
+    queryKey: [`/api/ritual/status?date=${today}`],
+    refetchInterval: 10000,
+  });
+
+  const completedSteps = new Set(status?.completedSteps || []);
+
+  const completeMutation = useMutation({
+    mutationFn: async (step: string) => {
+      const res = await apiRequest("POST", "/api/ritual/complete", { date: today, step });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ritual/status"] });
+      if (data.allDone) {
+        setTimeout(() => setShowCelebration(true), 500);
+      }
+    },
+  });
+
+  const resetMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/ritual/reset", { date: today });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ritual/status"] });
+    },
+  });
 
   const handleComplete = (step: string) => {
-    const newCompleted = new Set(completedSteps);
-    newCompleted.add(step);
-    setCompletedSteps(newCompleted);
-
-    if (newCompleted.size === RITUAL_STEPS.length) {
-      setTimeout(() => setShowCelebration(true), 500);
-    }
+    completeMutation.mutate(step);
   };
 
   const handleReset = () => {
-    setCompletedSteps(new Set());
-    localStorage.removeItem("ritualSteps");
+    resetMutation.mutate();
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-100 to-purple-100 dark:from-indigo-950 dark:to-purple-950 pb-[72px]">
+        <div className="flex-1 flex items-center justify-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+            <MoonIcon className="w-16 h-16" />
+          </motion.div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-100 to-purple-100 dark:from-indigo-950 dark:to-purple-950 pb-[72px]">
@@ -226,6 +254,7 @@ export default function SleepRitualPage() {
         {completedSteps.size > 0 && (
           <button
             onClick={handleReset}
+            disabled={resetMutation.isPending}
             className="mt-6 w-10 h-10 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center opacity-50 shadow"
             data-testid="button-reset-ritual"
           >

@@ -1,17 +1,12 @@
-import { storage } from "../storage";
+function getHAConfig(): { baseUrl: string; token: string } | null {
+  const baseUrl = process.env.HOME_ASSISTANT_URL;
+  const token = process.env.HOME_ASSISTANT_TOKEN;
 
-async function getHAConfig(): Promise<{ baseUrl: string; token: string } | null> {
-  const baseUrlSetting = await storage.getSetting("ha_base_url");
-  const tokenSetting = await storage.getSetting("ha_token");
-
-  if (!baseUrlSetting || !tokenSetting) {
+  if (!baseUrl || !token) {
     return null;
   }
 
-  return {
-    baseUrl: baseUrlSetting.value,
-    token: tokenSetting.value,
-  };
+  return { baseUrl, token };
 }
 
 export interface HAEntity {
@@ -22,7 +17,7 @@ export interface HAEntity {
 }
 
 export async function getEntityState(entityId: string): Promise<string | null> {
-  const config = await getHAConfig();
+  const config = getHAConfig();
   if (!config) return null;
 
   try {
@@ -54,7 +49,7 @@ export async function callService(
   service: string,
   data: Record<string, any> = {}
 ): Promise<boolean> {
-  const config = await getHAConfig();
+  const config = getHAConfig();
   if (!config) {
     console.log("Home Assistant not configured - skipping service call");
     return false;
@@ -81,8 +76,7 @@ export async function callService(
 }
 
 export async function triggerSleepMode(): Promise<boolean> {
-  const sceneSetting = await storage.getSetting("ha_sleep_scene");
-  const sceneName = sceneSetting?.value || "scene.sleep_mode";
+  const sceneName = process.env.HOME_ASSISTANT_SLEEP_SCENE || "scene.sleep_mode";
 
   return await callService("scene", "turn_on", {
     entity_id: sceneName,
@@ -90,8 +84,7 @@ export async function triggerSleepMode(): Promise<boolean> {
 }
 
 export async function triggerMonsterScanEffect(): Promise<boolean> {
-  const lightSetting = await storage.getSetting("ha_monster_light");
-  const lightEntity = lightSetting?.value || "light.bedroom";
+  const lightEntity = process.env.HOME_ASSISTANT_BEDROOM_LIGHT || "light.bedroom";
 
   const originalState = await getEntityState(lightEntity);
 
@@ -121,14 +114,14 @@ export async function triggerMonsterScanEffect(): Promise<boolean> {
 }
 
 export async function getDashboardEntities(): Promise<HAEntity[]> {
-  const entitiesSetting = await storage.getSetting("ha_dashboard_entities");
+  const entitiesJson = process.env.HOME_ASSISTANT_DASHBOARD_ENTITIES;
   
-  if (!entitiesSetting) {
+  if (!entitiesJson) {
     return [];
   }
 
   try {
-    const entityConfigs = JSON.parse(entitiesSetting.value) as Array<{
+    const entityConfigs = JSON.parse(entitiesJson) as Array<{
       id: string;
       friendlyName: string;
       type: "light" | "temperature" | "window" | "sensor";
@@ -153,7 +146,7 @@ export async function getDashboardEntities(): Promise<HAEntity[]> {
   }
 }
 
-export async function isConfigured(): Promise<boolean> {
-  const config = await getHAConfig();
+export function isConfigured(): boolean {
+  const config = getHAConfig();
   return config !== null;
 }

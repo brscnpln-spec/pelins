@@ -139,7 +139,7 @@ export async function registerRoutes(
 
   app.get("/api/dashboard/home-status", async (req, res) => {
     try {
-      const configured = await isHAConfigured();
+      const configured = isHAConfigured();
       if (!configured) {
         return res.json({ configured: false, entities: [] });
       }

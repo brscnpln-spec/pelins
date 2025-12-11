@@ -1,3 +1,5 @@
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import MonsterScanner from "@/components/MonsterScanner";
 import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
@@ -35,14 +37,19 @@ function StarIcon({ className, delay = 0 }: { className?: string; delay?: number
 }
 
 export default function MonsterDetectorPage() {
+  const scanMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/monster/scan", {});
+      return res.json();
+    },
+  });
+
   const handleScanStart = () => {
-    // todo: replace with API call to trigger Home Assistant light flash
-    console.log("Monster scan started - would trigger HA light flash");
+    scanMutation.mutate();
   };
 
   const handleScanComplete = () => {
-    // todo: replace with API call to log scan result
-    console.log("Monster scan complete - would log to database");
+    // Scan logged automatically via mutation
   };
 
   return (
