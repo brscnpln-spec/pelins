@@ -207,7 +207,7 @@ export default function FamilyDashboardPage() {
         <section>
           <div className="flex items-center gap-2 mb-2">
             <Sun className="w-4 h-4 text-amber-500" />
-            <span className="text-sm font-medium">Weather</span>
+            <span className="text-sm font-medium">Weather - Munich</span>
             {weatherLoading && <LoadingSpinner />}
           </div>
 

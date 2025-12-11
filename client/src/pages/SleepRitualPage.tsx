@@ -21,15 +21,8 @@ function ToothbrushIcon() {
         <rect x="40" y="70" width="3" height="8" rx="1" fill="#93C5FD" />
         <rect x="45" y="70" width="3" height="8" rx="1" fill="#60A5FA" />
       </g>
-      <motion.g
-        animate={{ rotate: [-5, 5, -5] }}
-        transition={{ duration: 0.5, repeat: Infinity }}
-        style={{ transformOrigin: "40px 40px" }}
-      >
-        <ellipse cx="25" cy="25" rx="6" ry="4" fill="#E0F2FE" opacity="0.8" />
-        <ellipse cx="55" cy="20" rx="5" ry="3" fill="#E0F2FE" opacity="0.8" />
-        <ellipse cx="20" cy="35" rx="4" ry="3" fill="#E0F2FE" opacity="0.6" />
-      </motion.g>
+      <ellipse cx="25" cy="25" rx="6" ry="4" fill="#E0F2FE" opacity="0.6" />
+      <ellipse cx="55" cy="20" rx="5" ry="3" fill="#E0F2FE" opacity="0.6" />
       <circle cx="40" cy="48" r="6" fill="white" stroke="#60A5FA" strokeWidth="2" />
       <circle cx="38" cy="46" r="1.5" fill="#60A5FA" />
       <circle cx="42" cy="46" r="1.5" fill="#60A5FA" />
@@ -49,12 +42,8 @@ function ToiletIcon() {
       <circle cx="37" cy="40" r="2" fill="#FBBF24" />
       <circle cx="43" cy="40" r="2" fill="#FBBF24" />
       <path d="M36 46 Q40 50 44 46" stroke="#FBBF24" strokeWidth="2" fill="none" strokeLinecap="round" />
-      <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-        <path d="M25 20 Q27 15 25 10" stroke="#93C5FD" strokeWidth="2" fill="none" strokeLinecap="round" />
-        <path d="M55 18 Q57 13 55 8" stroke="#93C5FD" strokeWidth="2" fill="none" strokeLinecap="round" />
-        <circle cx="32" cy="8" r="3" fill="#BFDBFE" />
-        <circle cx="48" cy="6" r="2" fill="#BFDBFE" />
-      </motion.g>
+      <circle cx="32" cy="8" r="3" fill="#BFDBFE" opacity="0.6" />
+      <circle cx="48" cy="6" r="2" fill="#BFDBFE" opacity="0.6" />
     </svg>
   );
 }
@@ -75,27 +64,18 @@ function PajamasIcon() {
       <path d="M36 46 Q40 49 44 46" stroke="#A78BFA" strokeWidth="1.5" fill="none" strokeLinecap="round" />
       <ellipse cx="30" cy="44" rx="3" ry="2" fill="#FECACA" opacity="0.5" />
       <ellipse cx="50" cy="44" rx="3" ry="2" fill="#FECACA" opacity="0.5" />
-      <motion.g animate={{ opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 2, repeat: Infinity }}>
-        <circle cx="32" cy="58" r="3" fill="#A78BFA" opacity="0.6" />
-        <circle cx="40" cy="62" r="3" fill="#A78BFA" opacity="0.6" />
-        <circle cx="48" cy="58" r="3" fill="#A78BFA" opacity="0.6" />
-      </motion.g>
-      <motion.g animate={{ y: [0, -2, 0], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }}>
-        <text x="55" y="25" fontSize="10" fill="#A78BFA">z</text>
-        <text x="60" y="20" fontSize="8" fill="#A78BFA">z</text>
-        <text x="63" y="15" fontSize="6" fill="#A78BFA">z</text>
-      </motion.g>
+      <circle cx="32" cy="58" r="3" fill="#A78BFA" opacity="0.5" />
+      <circle cx="40" cy="62" r="3" fill="#A78BFA" opacity="0.5" />
+      <circle cx="48" cy="58" r="3" fill="#A78BFA" opacity="0.5" />
     </svg>
   );
 }
 
 function MoonIcon({ className }: { className?: string }) {
   return (
-    <motion.svg 
+    <svg 
       viewBox="0 0 60 60" 
       className={className}
-      animate={{ rotate: [0, 5, -5, 0] }}
-      transition={{ duration: 4, repeat: Infinity }}
     >
       <path
         d="M45 30c0-10-8-18-18-18 2 4 3 8 3 13 0 12-10 22-22 22 4 6 11 10 19 10 12 0 18-10 18-27z"
@@ -105,17 +85,19 @@ function MoonIcon({ className }: { className?: string }) {
       />
       <circle cx="38" cy="22" r="2" fill="#FBBF24" />
       <circle cx="42" cy="32" r="1.5" fill="#FBBF24" />
-    </motion.svg>
+    </svg>
   );
 }
 
 function StarIcon({ className, delay = 0 }: { className?: string; delay?: number }) {
   return (
-    <motion.svg 
+    <svg 
       viewBox="0 0 24 24" 
       className={className}
-      animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
-      transition={{ duration: 2, repeat: Infinity, delay }}
+      style={{ 
+        animation: `twinkle 3s ease-in-out infinite`,
+        animationDelay: `${delay}s`
+      }}
     >
       <path
         d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z"
@@ -123,40 +105,29 @@ function StarIcon({ className, delay = 0 }: { className?: string; delay?: number
         stroke="#FACC15"
         strokeWidth="1"
       />
-    </motion.svg>
-  );
-}
-
-function CloudIcon({ className, delay = 0 }: { className?: string; delay?: number }) {
-  return (
-    <motion.svg 
-      viewBox="0 0 60 40" 
-      className={className}
-      animate={{ x: [0, 10, 0] }}
-      transition={{ duration: 8, repeat: Infinity, delay }}
-    >
-      <ellipse cx="30" cy="25" rx="20" ry="12" fill="white" opacity="0.15" />
-      <ellipse cx="20" cy="22" rx="12" ry="10" fill="white" opacity="0.15" />
-      <ellipse cx="40" cy="22" rx="12" ry="10" fill="white" opacity="0.15" />
-    </motion.svg>
+    </svg>
   );
 }
 
 function BackgroundDecorations() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      <CloudIcon className="absolute top-8 left-8 w-20" delay={0} />
-      <CloudIcon className="absolute top-16 right-16 w-16" delay={2} />
-      <CloudIcon className="absolute top-28 left-1/3 w-24" delay={4} />
+      <style>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
+      `}</style>
+      
+      <div className="absolute top-8 left-8 w-16 h-8 bg-white/10 rounded-full blur-sm" />
+      <div className="absolute top-20 right-12 w-20 h-10 bg-white/10 rounded-full blur-sm" />
       
       <StarIcon className="absolute top-12 left-1/4 w-4" delay={0} />
-      <StarIcon className="absolute top-20 right-1/4 w-3" delay={0.5} />
-      <StarIcon className="absolute top-6 right-1/3 w-5" delay={1} />
-      <StarIcon className="absolute top-32 left-12 w-3" delay={1.5} />
-      <StarIcon className="absolute top-10 right-12 w-4" delay={2} />
-      <StarIcon className="absolute top-24 left-1/2 w-3" delay={2.5} />
-      <StarIcon className="absolute bottom-32 left-8 w-4" delay={0.8} />
-      <StarIcon className="absolute bottom-40 right-8 w-5" delay={1.2} />
+      <StarIcon className="absolute top-20 right-1/4 w-3" delay={1} />
+      <StarIcon className="absolute top-6 right-1/3 w-5" delay={2} />
+      <StarIcon className="absolute top-10 right-12 w-4" delay={0.5} />
+      <StarIcon className="absolute bottom-36 left-8 w-4" delay={1.5} />
+      <StarIcon className="absolute bottom-44 right-12 w-5" delay={2.5} />
     </div>
   );
 }

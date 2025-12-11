@@ -56,7 +56,7 @@ Preferred communication style: Simple, everyday language.
 - Uses Open-Meteo API (no API key required)
 - Provides current conditions, hourly forecast for today, and 7-day daily forecast
 - Located in `server/integrations/weather.ts`
-- Configurable location via environment variables
+- Default location: Munich, Germany (48.1351, 11.5820)
 
 ### Home Assistant Integration
 - REST API integration using long-lived access tokens

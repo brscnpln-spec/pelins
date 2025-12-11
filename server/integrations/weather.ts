@@ -67,8 +67,8 @@ function getDayName(date: Date): string {
 }
 
 export async function getWeather(
-  latitude: number = 41.0082,
-  longitude: number = 28.9784
+  latitude: number = 48.1351,
+  longitude: number = 11.5820
 ): Promise<WeatherData> {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7`;
