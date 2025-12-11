@@ -12,6 +12,14 @@ function hasLocalCredentials(): boolean {
   );
 }
 
+// Get redirect URI based on environment
+function getRedirectUri(): string {
+  if (process.env.GOOGLE_REDIRECT_URI) {
+    return process.env.GOOGLE_REDIRECT_URI;
+  }
+  return "http://localhost:5000/api/auth/google/callback";
+}
+
 // Get OAuth client for local deployment
 async function getLocalOAuthClient() {
   if (localOAuthClient) {
@@ -21,7 +29,7 @@ async function getLocalOAuthClient() {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    "http://localhost:5000/api/auth/google/callback"
+    getRedirectUri()
   );
 
   oauth2Client.setCredentials({
@@ -163,7 +171,7 @@ export function getAuthUrl(): string {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    "http://localhost:5000/api/auth/google/callback"
+    getRedirectUri()
   );
 
   return oauth2Client.generateAuthUrl({
@@ -181,7 +189,7 @@ export async function exchangeCodeForTokens(code: string): Promise<{ refresh_tok
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    "http://localhost:5000/api/auth/google/callback"
+    getRedirectUri()
   );
 
   const { tokens } = await oauth2Client.getToken(code);

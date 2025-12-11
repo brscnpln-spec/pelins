@@ -17,6 +17,8 @@ services:
         sync: false
       - key: GOOGLE_REFRESH_TOKEN
         sync: false
+      - key: GOOGLE_REDIRECT_URI
+        sync: false
       - key: HOME_ASSISTANT_URL
         sync: false
       - key: HOME_ASSISTANT_TOKEN
