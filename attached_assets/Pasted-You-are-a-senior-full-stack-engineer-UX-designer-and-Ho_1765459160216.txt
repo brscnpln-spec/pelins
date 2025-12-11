@@ -1,0 +1,424 @@
+You are a senior full-stack engineer, UX designer, and Home Assistant integrator.
+
+Your task: 
+Design and implement a **local-first web application** that runs on a **Raspberry Pi 5 with a touch display**. The app has 3 main features:
+
+1. **Sleep Ritual Interactive Checklist** (for a child, with playful UX)
+2. **Monster Detector** (to help with “imaginary monsters in the bedroom” anxiety)
+3. **Family Dashboard** (Google Calendar, weather, and basic Home Assistant status)
+
+The user is an experienced product manager and “vibe coder”: they understand concepts, can tweak code and configs, but want a clear, maintainable structure, lots of comments, and a smooth dev experience.
+
+---
+
+## 0. General Requirements
+
+- Target device: **Raspberry Pi 5** with a **7–10 inch touch display**, resolution around 800x480 or 1024x600.
+- The app will run locally in the home network, exposed via the Pi’s IP, and used mostly on the touch screen in kiosk mode.
+- The UI must be:
+  - **Big, finger-friendly** controls (no tiny click targets)
+  - Optimized for **landscape orientation**
+  - Simple, colorful, child-friendly, but not visually noisy
+- The code should be:
+  - Written in **TypeScript**
+  - Separated into frontend and backend
+  - Easy to understand and extend
+  - Commented, with explanations for non-expert developers
+
+### Tech Stack
+
+Propose and then implement using:
+
+- **Frontend**
+  - React 18 + TypeScript
+  - Vite as the build tool
+  - A simple styling solution: Tailwind CSS *or* CSS Modules (you choose, but keep it simple and explain)
+  - React Router for simple routing
+- **Backend**
+  - Node.js + TypeScript
+  - Express (or Fastify) for API routes
+  - **SQLite** as the primary database (local file, very simple to run on Pi)
+- **Integrations**
+  - Home Assistant via **REST API** using a long-lived access token
+  - Google Calendar (read-only) via Google Calendar API
+  - Weather via a simple public API (e.g. Open-Meteo or OpenWeatherMap). Use environment variables for API keys / location if needed.
+
+Everything should be runnable on the Pi with a simple:
+
+- `npm install`
+- `npm run dev` (for development)
+- `npm run build && npm run start` (for production)
+
+Also provide a **Dockerfile** and (optionally) a `docker-compose.yml` so the user can run everything in a container on the Pi.
+
+---
+
+## 1. Overall Architecture
+
+Design a simple architecture and explain it in the output:
+
+- `frontend/`
+  - React app
+  - Pages:
+    - `SleepRitualPage`
+    - `MonsterDetectorPage`
+    - `FamilyDashboardPage`
+    - Optional: `SettingsPage`
+- `backend/`
+  - Express server
+  - API routes:
+    - `/api/ritual/*`
+    - `/api/monster/*`
+    - `/api/dashboard/*`
+    - `/api/settings/*` (for storing integration config: HA URL, tokens, etc.)
+  - Database layer (SQLite)
+  - Integration modules:
+    - `homeAssistantClient.ts`
+    - `googleCalendarClient.ts`
+    - `weatherClient.ts`
+- A root `README.md` describing:
+  - Setup
+  - Configuration
+  - How to run on Raspberry Pi 5 (including enabling touch screen kiosk mode with Chromium or similar)
+
+Please output:
+
+1. The **folder structure**.
+2. The most important frontend files (with full code).
+3. The most important backend files (with full code).
+4. Database schema and migration/init script.
+5. Example `.env.example` with all required environment variables.
+6. Installation & run instructions (especially for the Pi).
+
+---
+
+## 2. Feature 1 – Sleep Ritual Interactive Checklist
+
+This is for a young child. The sequence is always:
+
+- Step 1: **Brush teeth** (“Diş”)
+- Step 2: **Toilet** (“Çiş”)
+- Step 3: **Put on pajamas** (“Pijama”)
+
+### UX Requirements
+
+- Full-screen page with 3 big cards or buttons in a vertical or horizontal layout.
+- Each step has:
+  - An icon (tooth, toilet, pajamas)
+  - A short label (“Teeth”, “Toilet”, “Pajamas” – but code should allow localization later)
+  - A status indicator: **Not done** → neutral, **Done** → green with check mark and maybe a small confetti animation.
+- At the top: show current day and a friendly title like “Tonight’s Sleep Ritual”.
+- At the bottom: show a simple progress bar or “3/3 completed” indicator.
+- When all 3 steps are marked as done:
+  - Trigger a positive animation (e.g., full-screen overlay with stars for 1–2 seconds).
+  - Call a backend endpoint that can trigger a Home Assistant scene to enter “Sleep Mode” (for example: dim lights, turn on bedside light, maybe play a short sound).
+
+### Logic & Data
+
+- The completion state must be stored **per day**.
+- If the child reopens the app the same evening, the steps should still show as completed.
+- A “Reset for tonight” function should exist (only accessible by adult – e.g., hidden button or long-press, or an adult settings area).
+- The backend should store:
+  - `date` (YYYY-MM-DD)
+  - `step` (enum: `TEETH`, `TOILET`, `PAJAMAS`)
+  - `completed_at` timestamp
+
+Design a simple SQLite schema, e.g.:
+
+- `ritual_completions` table:
+  - `id` INTEGER PRIMARY KEY
+  - `date` TEXT (ISO date)
+  - `step` TEXT
+  - `completed_at` TEXT (ISO datetime)
+
+### API for Sleep Ritual
+
+Implement endpoints such as:
+
+- `GET /api/ritual/status?date=YYYY-MM-DD`  
+  → returns which steps are completed for that date.
+- `POST /api/ritual/complete`  
+  body: `{ date, step }`  
+  → marks step as completed, stores in DB, returns updated status.
+- `POST /api/ritual/reset`  
+  body: `{ date }`  
+  → resets all steps for that date (for adult use).
+- `POST /api/ritual/trigger-sleep-mode`  
+  → calls Home Assistant to activate a configured “sleep” scene.
+
+On the frontend, implement a React hook or context that:
+
+- Fetches the current day’s status on mount.
+- Updates state when user taps a step.
+- Handles loading and error states with simple, kid-friendly messages.
+
+---
+
+## 3. Feature 2 – Monster Detector
+
+This is a playful feature to help the child feel safe in their bedroom.
+
+### UX Requirements
+
+- Full-screen layout with:
+  - A big center button: “Start Monster Scan”
+  - A visual “radar” or scanning animation (e.g., circle with rotating line) when scanning.
+  - After a short delay (e.g., 3–5 seconds), show message:
+    - “No monsters detected. The room is safe!” with a friendly icon/mascot.
+- Optionally, show a fun, friendly monster or dinosaur mascot who “guards” the room.
+
+### Behaviour & Integration
+
+When the child taps “Start Monster Scan”:
+
+1. Frontend calls backend endpoint `/api/monster/scan`.
+2. Backend:
+   - Optionally logs the scan in the database (date/time, result).
+   - Triggers a small Home Assistant effect:
+     - For example, briefly turn the room light on and off once (“scan flash”), then back to a calm brightness.
+     - Or activate a “monster check” light scene.
+3. After the scan finishes, the frontend:
+   - Shows a reassuring message, e.g.:
+     - “Monster Detector 3000: No monsters found!”
+   - Can display a small celebratory animation.
+
+Design the backend so that:
+
+- The HA integration is configurable via settings:
+  - Which light entity to use (e.g. `light.kerem_room`)
+  - Whether to flash or just change brightness
+- Provide reasonable defaults and clear comments.
+
+### API for Monster Detector
+
+- `POST /api/monster/scan`  
+  - Response: `{ status: "ok", monstersFound: false }` (always false for now, but keep the structure flexible for future changes).
+- `GET /api/monster/history` (optional)
+  - Returns past scans (date/time), so the parent can see usage.
+
+SQLite table suggestion:
+
+- `monster_scans`:
+  - `id` INTEGER PRIMARY KEY
+  - `timestamp` TEXT (ISO datetime)
+  - `result` TEXT (e.g., "NO_MONSTERS")
+
+---
+
+## 4. Feature 3 – Family Dashboard
+
+This is a “home hub” screen that shows today’s and upcoming events, weather, and some basic home status.
+
+### UX Requirements
+
+A main dashboard page with:
+
+1. **Top area**:
+   - Current date
+   - Greeting (e.g. “Good evening, family!”)
+2. **Google Calendar section**:
+   - Show today’s events and maybe the next 2–3 days.
+   - Each event row: time, title, calendar (e.g. color/label).
+3. **Weather section**:
+   - Current temperature
+   - Short description (e.g. “Cloudy”, “Sunny”)
+   - Optionally, forecast for the next day or two.
+4. **Home Assistant section**:
+   - Show a few key states, for example:
+     - Is child’s bedroom window open?
+     - Is the main light on or off?
+     - Temperature in the bedroom
+   - This should be configurable so the user can decide which entities to show.
+5. **Navigation**:
+   - Simple navigation tabs or buttons to switch between:
+     - Sleep Ritual
+     - Monster Detector
+     - Dashboard
+
+The layout must work nicely on an 800x480 or 1024x600 touch screen in landscape.
+
+### Data & Integrations
+
+#### 4.1. Google Calendar
+
+- Backend should have a module e.g. `googleCalendarClient.ts` that:
+  - Reads credentials from environment or config file.
+  - Fetches events for:
+    - Today
+    - Next N days (configurable, default 2).
+- API endpoint:
+  - `GET /api/dashboard/calendar?days=3`
+  - Returns a simplified list like:
+    ```json
+    [
+      {
+        "id": "string",
+        "start": "2025-01-01T09:00:00Z",
+        "end": "2025-01-01T10:00:00Z",
+        "summary": "Dentist appointment",
+        "calendarName": "Family"
+      }
+    ]
+    ```
+
+If full OAuth flow setup is too complex to implement fully, at least:
+
+- Provide the code structure and clear TODO comments for inserting credentials.
+- Explain where the user should paste their `credentials.json` and token file.
+
+#### 4.2. Weather
+
+- Backend `weatherClient.ts`:
+  - Uses a simple HTTP call to a public API.
+  - Reads location and API key (if needed) from environment variables.
+- Endpoint:
+  - `GET /api/dashboard/weather`
+  - Returns:
+    ```json
+    {
+      "temperatureC": 18.5,
+      "description": "Partly cloudy",
+      "icon": "cloudy"
+    }
+    ```
+
+#### 4.3. Home Assistant Status
+
+- Backend `homeAssistantClient.ts`:
+  - Reads from environment:
+    - `HA_BASE_URL` (e.g., `http://homeassistant.local:8123`)
+    - `HA_TOKEN` (long-lived access token)
+  - Exposes functions like:
+    - `getEntityState(entityId: string)`
+    - `callService(domain: string, service: string, data: object)`
+
+For the dashboard, implement:
+
+- `GET /api/dashboard/home-status`
+  - Should return a configured list of entities + their states, for example:
+    ```json
+    {
+      "entities": [
+        {
+          "id": "binary_sensor.childroom_window",
+          "friendlyName": "Child Room Window",
+          "state": "off"
+        },
+        {
+          "id": "light.childroom_main",
+          "friendlyName": "Child Room Light",
+          "state": "on"
+        },
+        {
+          "id": "sensor.childroom_temperature",
+          "friendlyName": "Child Room Temperature",
+          "state": "21.5"
+        }
+      ]
+    }
+    ```
+
+You may store the list of entities in:
+
+- A simple JSON config file, or
+- A `settings` table in SQLite.
+
+---
+
+## 5. Settings & Configuration
+
+Create a simple Settings backend (and optional UI) so the user can configure:
+
+- Home Assistant:
+  - Base URL
+  - Token
+  - Entities used:
+    - Sleep mode scene name / ID
+    - Monster scan light entity
+    - Dashboard entities list
+- Weather location and API key
+- Google Calendar:
+  - Calendar IDs to fetch
+
+At minimum, store these in a `settings` table or a JSON config file with a typed helper in the backend.
+
+Optionally create a simple `SettingsPage` in the frontend with:
+
+- Simple form
+- Save button
+- Calls `/api/settings/*` endpoints
+
+But keep in mind this will be used on a touch display, so the settings UI can be basic and adult-only (no need to be child-friendly).
+
+---
+
+## 6. UI/UX Details
+
+- Use large buttons (minimum 60x60 px tap area).
+- High contrast and clear icons.
+- Avoid tiny text: use at least 16–18px base font, with larger for titles.
+- For child-facing screens (Sleep Ritual and Monster Detector):
+  - Use positive, reassuring language.
+  - No scary imagery. Monsters are abstract or friendly, or simply not shown.
+- For the dashboard:
+  - More neutral, “parent-friendly” style.
+
+---
+
+## 7. Code Quality & Explanation
+
+In your output, please:
+
+1. Show the **key frontend components** with full code:
+   - `App.tsx`
+   - `routes` setup
+   - `SleepRitualPage.tsx`
+   - `MonsterDetectorPage.tsx`
+   - `FamilyDashboardPage.tsx`
+   - Shared components (e.g. `Card`, `Button`, `TopBar`, `NavTabs`)
+2. Show the **key backend files**:
+   - `server.ts` or `index.ts`
+   - Route modules: `ritualRoutes.ts`, `monsterRoutes.ts`, `dashboardRoutes.ts`, `settingsRoutes.ts`
+   - Integration clients: `homeAssistantClient.ts`, `googleCalendarClient.ts`, `weatherClient.ts`
+   - DB setup: `db.ts`, migration or init script
+3. Provide a complete `package.json` for root / backend / frontend as needed.
+4. Provide a `README.md` that includes:
+   - Prerequisites
+   - How to configure environment variables
+   - How to run on a Raspberry Pi 5
+   - Optional: how to configure kiosk mode in Chromium to auto-open the dashboard on boot.
+
+Add comments in the code to explain:
+
+- Where the user can adapt texts (e.g., label translations from English to Turkish).
+- Where to plug in Home Assistant entities and scenes.
+- Where to insert real Google Calendar credentials / tokens.
+
+---
+
+## 8. Raspberry Pi Specific Notes
+
+Include in the README or comments:
+
+- That the backend should bind to `0.0.0.0` and listen on a configurable port (e.g. `3000`).
+- That the frontend build should produce static files served either:
+  - By the backend (Express static), or
+  - Via a separate static server (you can pick, but document clearly).
+- Short instructions for:
+  - Enabling touch screen
+  - Launching Chromium in kiosk mode pointing to the app URL (e.g., `http://localhost:3000` or `http://localhost:4173`).
+
+---
+
+## 9. Deliverables
+
+Please output:
+
+1. The full folder/file structure.
+2. The key code files with TypeScript implementations.
+3. SQL for creating the SQLite tables.
+4. `.env.example` with all required variables.
+5. `README.md` with step-by-step instructions.
+6. Any notes or TODOs for Google Calendar auth that cannot be fully automated.
+
+Focus on **a working MVP** that can actually run on a Raspberry Pi 5 with a touch display and integrate with Home Assistant, while being simple enough for a “vibe coder” to extend and modify.
