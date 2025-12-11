@@ -1,5 +1,6 @@
 import MonsterScanner from "@/components/MonsterScanner";
 import BottomNav from "@/components/BottomNav";
+import DigitalClock from "@/components/DigitalClock";
 import { motion } from "framer-motion";
 
 function CloudIcon({ className, delay = 0 }: { className?: string; delay?: number }) {
@@ -59,17 +60,8 @@ export default function MonsterDetectorPage() {
         <StarIcon className="absolute top-28 left-1/2 w-3" delay={2.5} />
       </div>
 
-      <header className="flex items-center justify-center px-6 py-4 min-h-[60px] relative z-10">
-        <motion.div
-          className="flex items-center gap-2"
-          animate={{ y: [0, -3, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <svg viewBox="0 0 40 40" className="w-10 h-10">
-            <circle cx="20" cy="20" r="16" fill="#60A5FA" />
-            <path d="M12 18 L16 22 L28 14" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          </svg>
-        </motion.div>
+      <header className="flex items-center justify-center px-6 py-4 min-h-[70px] relative z-10">
+        <DigitalClock />
       </header>
 
       <main className="flex-1 flex flex-col relative z-10">

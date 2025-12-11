@@ -34,57 +34,77 @@ function ShieldIcon({ className }: { className?: string }) {
   );
 }
 
-function HappyMonsterIcon({ className }: { className?: string }) {
+function BigCheckIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 120 120" className={className}>
-      <circle cx="60" cy="60" r="50" fill="#86EFAC" />
-      <ellipse cx="42" cy="50" rx="12" ry="14" fill="white" />
-      <ellipse cx="78" cy="50" rx="12" ry="14" fill="white" />
-      <circle cx="42" cy="52" r="6" fill="#1F2937" />
-      <circle cx="78" cy="52" r="6" fill="#1F2937" />
-      <circle cx="44" cy="49" r="2" fill="white" />
-      <circle cx="80" cy="49" r="2" fill="white" />
-      <path
-        d="M40 75 Q60 95 80 75"
-        stroke="#1F2937"
-        strokeWidth="4"
+      <circle cx="60" cy="60" r="55" fill="#22C55E" />
+      <circle cx="60" cy="60" r="45" fill="#4ADE80" />
+      <motion.path
+        d="M35 60 L52 77 L85 44"
+        stroke="white"
+        strokeWidth="10"
         strokeLinecap="round"
+        strokeLinejoin="round"
         fill="none"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
       />
-      <ellipse cx="28" cy="65" rx="8" ry="5" fill="#FCA5A5" opacity="0.6" />
-      <ellipse cx="92" cy="65" rx="8" ry="5" fill="#FCA5A5" opacity="0.6" />
-      <circle cx="30" cy="25" r="12" fill="#86EFAC" />
-      <circle cx="90" cy="25" r="12" fill="#86EFAC" />
     </svg>
   );
 }
 
-function NoMonsterIcon({ className }: { className?: string }) {
+function NoMonsterScene({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 200 200" className={className}>
-      <circle cx="100" cy="100" r="85" fill="#DCFCE7" stroke="#86EFAC" strokeWidth="6" />
-      <circle cx="70" cy="85" r="18" fill="white" stroke="#E5E7EB" strokeWidth="2" />
-      <circle cx="130" cy="85" r="18" fill="white" stroke="#E5E7EB" strokeWidth="2" />
-      <circle cx="70" cy="88" r="8" fill="#1F2937" />
-      <circle cx="130" cy="88" r="8" fill="#1F2937" />
-      <circle cx="73" cy="84" r="3" fill="white" />
-      <circle cx="133" cy="84" r="3" fill="white" />
-      <path
-        d="M65 125 Q100 155 135 125"
-        stroke="#1F2937"
-        strokeWidth="5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="100" cy="55" r="10" fill="#FCD34D" />
-      <path d="M100 45 L100 35 M92 48 L85 42 M108 48 L115 42" stroke="#FCD34D" strokeWidth="3" strokeLinecap="round" />
-      <path
-        d="M155 145 L45 55"
-        stroke="#EF4444"
-        strokeWidth="8"
-        strokeLinecap="round"
-        opacity="0"
-      />
+    <svg viewBox="0 0 280 200" className={className}>
+      <rect x="20" y="80" width="100" height="100" rx="8" fill="#FEF3C7" stroke="#FCD34D" strokeWidth="3" />
+      <rect x="30" y="90" width="40" height="30" rx="4" fill="#93C5FD" opacity="0.5" />
+      <rect x="50" y="130" width="50" height="40" rx="4" fill="#DDD6FE" />
+      
+      <ellipse cx="70" cy="175" rx="45" ry="8" fill="#E5E7EB" />
+      
+      <rect x="160" y="100" width="80" height="80" rx="8" fill="#FECACA" stroke="#FCA5A5" strokeWidth="3" />
+      <rect x="170" y="110" width="30" height="25" rx="4" fill="#93C5FD" opacity="0.5" />
+      <circle cx="200" cy="155" r="8" fill="#A78BFA" />
+      
+      <ellipse cx="200" cy="175" rx="45" ry="8" fill="#E5E7EB" />
+      
+      <motion.g
+        animate={{ y: [0, -3, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <circle cx="140" cy="50" r="25" fill="#FDE047" />
+        <circle cx="135" cy="45" r="4" fill="#1F2937" />
+        <circle cx="145" cy="45" r="4" fill="#1F2937" />
+        <path d="M132 55 Q140 62 148 55" stroke="#1F2937" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      </motion.g>
+      
+      <motion.text
+        x="140"
+        y="95"
+        textAnchor="middle"
+        fill="#22C55E"
+        fontSize="16"
+        fontWeight="bold"
+        animate={{ scale: [1, 1.1, 1] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+      >
+        0
+      </motion.text>
+      
+      <motion.g animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 3, repeat: Infinity }} style={{ transformOrigin: "50px 60px" }}>
+        <rect x="35" y="55" width="30" height="20" rx="4" fill="#86EFAC" />
+        <circle cx="50" cy="65" r="4" fill="white" />
+        <circle cx="48" cy="64" r="1.5" fill="#1F2937" />
+        <circle cx="52" cy="64" r="1.5" fill="#1F2937" />
+      </motion.g>
+      
+      <motion.g animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }} style={{ transformOrigin: "230px 60px" }}>
+        <rect x="215" y="55" width="30" height="20" rx="4" fill="#FCA5A5" />
+        <circle cx="230" cy="65" r="4" fill="white" />
+        <circle cx="228" cy="64" r="1.5" fill="#1F2937" />
+        <circle cx="232" cy="64" r="1.5" fill="#1F2937" />
+      </motion.g>
     </svg>
   );
 }
@@ -134,7 +154,7 @@ export default function MonsterScanner({ onScanStart, onScanComplete }: MonsterS
           >
             <motion.button
               onClick={handleStartScan}
-              className="w-[200px] h-[200px] rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex flex-col items-center justify-center shadow-xl border-4 border-blue-300"
+              className="w-[180px] h-[180px] rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex flex-col items-center justify-center shadow-xl border-4 border-blue-300"
               whileTap={{ scale: 0.95 }}
               animate={{ 
                 boxShadow: [
@@ -145,11 +165,11 @@ export default function MonsterScanner({ onScanStart, onScanComplete }: MonsterS
               transition={{ duration: 1.5, repeat: Infinity }}
               data-testid="button-start-scan"
             >
-              <ShieldIcon className="w-24 h-24 text-white" />
+              <ShieldIcon className="w-20 h-20 text-white" />
             </motion.button>
             
             <motion.div
-              className="mt-8 flex gap-2"
+              className="mt-6 flex gap-2"
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
@@ -168,7 +188,7 @@ export default function MonsterScanner({ onScanStart, onScanComplete }: MonsterS
             exit={{ opacity: 0 }}
             className="flex flex-col items-center"
           >
-            <div className="relative w-[220px] h-[220px]">
+            <div className="relative w-[200px] h-[200px]">
               <motion.div
                 className="absolute inset-0 rounded-full border-4 border-blue-400"
                 animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
@@ -192,7 +212,7 @@ export default function MonsterScanner({ onScanStart, onScanComplete }: MonsterS
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 />
-                <ShieldIcon className="w-20 h-20 text-blue-500 z-10" />
+                <ShieldIcon className="w-16 h-16 text-blue-500 z-10" />
               </div>
             </div>
             
@@ -222,25 +242,25 @@ export default function MonsterScanner({ onScanStart, onScanComplete }: MonsterS
             className="flex flex-col items-center text-center"
           >
             <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
               className="relative"
             >
-              <NoMonsterIcon className="w-48 h-48" />
+              <BigCheckIcon className="w-32 h-32" />
               <motion.div
                 className="absolute -top-2 -right-2"
-                animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
+                animate={{ rotate: [0, 15, -15, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <SleepyStarsIcon className="w-12 h-12" />
+                <SleepyStarsIcon className="w-10 h-10" />
               </motion.div>
               <motion.div
-                className="absolute -bottom-2 -left-2"
-                animate={{ rotate: [0, -10, 10, 0], scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                className="absolute -top-2 -left-2"
+                animate={{ rotate: [0, -15, 15, 0] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
               >
-                <SleepyStarsIcon className="w-10 h-10" />
+                <SleepyStarsIcon className="w-8 h-8" />
               </motion.div>
             </motion.div>
 
@@ -248,21 +268,38 @@ export default function MonsterScanner({ onScanStart, onScanComplete }: MonsterS
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="mt-6"
+              className="mt-4"
             >
-              <HappyMonsterIcon className="w-20 h-20 mx-auto" />
+              <NoMonsterScene className="w-72 h-48" />
+            </motion.div>
+
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, type: "spring" }}
+              className="mt-4 flex items-center gap-3 bg-green-100 dark:bg-green-900 rounded-full px-6 py-3"
+            >
+              <span className="text-4xl font-bold text-green-600 dark:text-green-400">0</span>
+              <svg viewBox="0 0 40 40" className="w-10 h-10">
+                <circle cx="20" cy="20" r="16" fill="#86EFAC" stroke="#22C55E" strokeWidth="2" />
+                <circle cx="15" cy="17" r="3" fill="white" />
+                <circle cx="25" cy="17" r="3" fill="white" />
+                <circle cx="15" cy="18" r="1.5" fill="#1F2937" />
+                <circle cx="25" cy="18" r="1.5" fill="#1F2937" />
+                <path d="M14 26 Q20 30 26 26" stroke="#1F2937" strokeWidth="2" fill="none" strokeLinecap="round" />
+              </svg>
             </motion.div>
 
             <motion.button
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.7 }}
               onClick={handleReset}
-              className="mt-6 w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg"
+              className="mt-6 w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg"
               whileTap={{ scale: 0.95 }}
               data-testid="button-scan-again"
             >
-              <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth="3">
+              <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="none" stroke="currentColor" strokeWidth="3">
                 <path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

@@ -3,38 +3,55 @@ import RitualStepCard from "@/components/RitualStepCard";
 import ProgressBar from "@/components/ProgressBar";
 import CelebrationOverlay from "@/components/CelebrationOverlay";
 import BottomNav from "@/components/BottomNav";
+import DigitalClock from "@/components/DigitalClock";
 import { motion } from "framer-motion";
 
-function ToothIcon() {
+function ToothbrushIcon() {
   return (
-    <svg viewBox="0 0 80 80" className="w-full h-full">
-      <ellipse cx="40" cy="45" rx="28" ry="30" fill="white" stroke="#60A5FA" strokeWidth="3" />
-      <ellipse cx="30" cy="65" rx="8" ry="12" fill="white" stroke="#60A5FA" strokeWidth="3" />
-      <ellipse cx="50" cy="65" rx="8" ry="12" fill="white" stroke="#60A5FA" strokeWidth="3" />
-      <path d="M25 35 Q40 45 55 35" stroke="#60A5FA" strokeWidth="3" fill="none" strokeLinecap="round" />
-      <circle cx="32" cy="28" r="4" fill="#60A5FA" />
-      <circle cx="48" cy="28" r="4" fill="#60A5FA" />
-      <path d="M36 38 Q40 42 44 38" stroke="#60A5FA" strokeWidth="2" fill="none" strokeLinecap="round" />
-      <motion.g animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-        <rect x="58" y="10" width="4" height="20" rx="2" fill="#93C5FD" />
-        <ellipse cx="60" cy="8" rx="8" ry="6" fill="#93C5FD" />
+    <svg viewBox="0 0 80 100" className="w-full h-full">
+      <rect x="35" y="10" width="10" height="55" rx="3" fill="#60A5FA" />
+      <rect x="32" y="8" width="16" height="8" rx="2" fill="#3B82F6" />
+      <ellipse cx="40" cy="75" rx="18" ry="12" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+      <rect x="28" y="68" width="24" height="20" rx="4" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+      <g>
+        <rect x="30" y="70" width="3" height="8" rx="1" fill="#93C5FD" />
+        <rect x="35" y="70" width="3" height="8" rx="1" fill="#60A5FA" />
+        <rect x="40" y="70" width="3" height="8" rx="1" fill="#93C5FD" />
+        <rect x="45" y="70" width="3" height="8" rx="1" fill="#60A5FA" />
+      </g>
+      <motion.g
+        animate={{ rotate: [-5, 5, -5] }}
+        transition={{ duration: 0.5, repeat: Infinity }}
+        style={{ transformOrigin: "40px 40px" }}
+      >
+        <ellipse cx="25" cy="25" rx="6" ry="4" fill="#E0F2FE" opacity="0.8" />
+        <ellipse cx="55" cy="20" rx="5" ry="3" fill="#E0F2FE" opacity="0.8" />
+        <ellipse cx="20" cy="35" rx="4" ry="3" fill="#E0F2FE" opacity="0.6" />
       </motion.g>
+      <circle cx="40" cy="48" r="6" fill="white" stroke="#60A5FA" strokeWidth="2" />
+      <circle cx="38" cy="46" r="1.5" fill="#60A5FA" />
+      <circle cx="42" cy="46" r="1.5" fill="#60A5FA" />
+      <path d="M37 50 Q40 53 43 50" stroke="#60A5FA" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
 
 function ToiletIcon() {
   return (
-    <svg viewBox="0 0 80 80" className="w-full h-full">
-      <rect x="20" y="15" width="40" height="50" rx="8" fill="white" stroke="#FBBF24" strokeWidth="3" />
-      <ellipse cx="40" cy="40" rx="14" ry="10" fill="#FEF3C7" stroke="#FBBF24" strokeWidth="2" />
-      <rect x="32" y="10" width="16" height="10" rx="3" fill="#FCD34D" />
-      <circle cx="40" cy="35" r="3" fill="#FBBF24" />
-      <path d="M35 42 Q40 48 45 42" stroke="#FBBF24" strokeWidth="2" fill="none" strokeLinecap="round" />
+    <svg viewBox="0 0 80 100" className="w-full h-full">
+      <ellipse cx="40" cy="70" rx="28" ry="18" fill="white" stroke="#FBBF24" strokeWidth="3" />
+      <ellipse cx="40" cy="65" rx="20" ry="12" fill="#FEF3C7" />
+      <rect x="15" y="25" width="50" height="35" rx="8" fill="white" stroke="#FBBF24" strokeWidth="3" />
+      <rect x="30" y="12" width="20" height="18" rx="4" fill="#FCD34D" />
+      <circle cx="40" cy="42" r="8" fill="#FEF3C7" stroke="#FBBF24" strokeWidth="2" />
+      <circle cx="37" cy="40" r="2" fill="#FBBF24" />
+      <circle cx="43" cy="40" r="2" fill="#FBBF24" />
+      <path d="M36 46 Q40 50 44 46" stroke="#FBBF24" strokeWidth="2" fill="none" strokeLinecap="round" />
       <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-        <circle cx="28" cy="25" r="2" fill="#93C5FD" />
-        <circle cx="52" cy="22" r="2" fill="#93C5FD" />
-        <circle cx="48" cy="28" r="1.5" fill="#93C5FD" />
+        <path d="M25 20 Q27 15 25 10" stroke="#93C5FD" strokeWidth="2" fill="none" strokeLinecap="round" />
+        <path d="M55 18 Q57 13 55 8" stroke="#93C5FD" strokeWidth="2" fill="none" strokeLinecap="round" />
+        <circle cx="32" cy="8" r="3" fill="#BFDBFE" />
+        <circle cx="48" cy="6" r="2" fill="#BFDBFE" />
       </motion.g>
     </svg>
   );
@@ -42,21 +59,29 @@ function ToiletIcon() {
 
 function PajamasIcon() {
   return (
-    <svg viewBox="0 0 80 80" className="w-full h-full">
-      <path d="M25 25 L40 20 L55 25 L55 60 L25 60 Z" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="3" />
-      <circle cx="40" cy="35" r="10" fill="white" stroke="#A78BFA" strokeWidth="2" />
-      <circle cx="37" cy="33" r="2" fill="#A78BFA" />
-      <circle cx="43" cy="33" r="2" fill="#A78BFA" />
-      <path d="M37 38 Q40 41 43 38" stroke="#A78BFA" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-      <path d="M15 28 L25 25 L25 45 L15 42 Z" fill="#C4B5FD" stroke="#A78BFA" strokeWidth="2" />
-      <path d="M65 28 L55 25 L55 45 L65 42 Z" fill="#C4B5FD" stroke="#A78BFA" strokeWidth="2" />
-      <line x1="40" y1="60" x2="40" y2="75" stroke="#A78BFA" strokeWidth="2" />
-      <rect x="28" y="60" width="10" height="15" rx="2" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="2" />
-      <rect x="42" y="60" width="10" height="15" rx="2" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="2" />
-      <motion.g animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
-        <circle cx="35" cy="50" r="2" fill="#A78BFA" />
-        <circle cx="40" cy="52" r="2" fill="#A78BFA" />
-        <circle cx="45" cy="50" r="2" fill="#A78BFA" />
+    <svg viewBox="0 0 80 100" className="w-full h-full">
+      <path d="M25 30 L40 22 L55 30 L58 75 L22 75 Z" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="3" />
+      <path d="M10 35 L25 30 L25 55 L10 50 Z" fill="#C4B5FD" stroke="#A78BFA" strokeWidth="2" />
+      <path d="M70 35 L55 30 L55 55 L70 50 Z" fill="#C4B5FD" stroke="#A78BFA" strokeWidth="2" />
+      <rect x="26" y="75" width="12" height="18" rx="3" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="2" />
+      <rect x="42" y="75" width="12" height="18" rx="3" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="2" />
+      <circle cx="40" cy="42" r="12" fill="white" stroke="#A78BFA" strokeWidth="2" />
+      <g>
+        <path d="M35 40 Q36 38 37 40" stroke="#A78BFA" strokeWidth="1.5" fill="none" />
+        <path d="M43 40 Q44 38 45 40" stroke="#A78BFA" strokeWidth="1.5" fill="none" />
+      </g>
+      <path d="M36 46 Q40 49 44 46" stroke="#A78BFA" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <ellipse cx="30" cy="44" rx="3" ry="2" fill="#FECACA" opacity="0.5" />
+      <ellipse cx="50" cy="44" rx="3" ry="2" fill="#FECACA" opacity="0.5" />
+      <motion.g animate={{ opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 2, repeat: Infinity }}>
+        <circle cx="32" cy="58" r="3" fill="#A78BFA" opacity="0.6" />
+        <circle cx="40" cy="62" r="3" fill="#A78BFA" opacity="0.6" />
+        <circle cx="48" cy="58" r="3" fill="#A78BFA" opacity="0.6" />
+      </motion.g>
+      <motion.g animate={{ y: [0, -2, 0], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }}>
+        <text x="55" y="25" fontSize="10" fill="#A78BFA">z</text>
+        <text x="60" y="20" fontSize="8" fill="#A78BFA">z</text>
+        <text x="63" y="15" fontSize="6" fill="#A78BFA">z</text>
       </motion.g>
     </svg>
   );
@@ -101,7 +126,7 @@ function StarIcon({ className, delay = 0 }: { className?: string; delay?: number
 }
 
 const RITUAL_STEPS = [
-  { step: "TEETH" as const, icon: <ToothIcon /> },
+  { step: "TEETH" as const, icon: <ToothbrushIcon /> },
   { step: "TOILET" as const, icon: <ToiletIcon /> },
   { step: "PAJAMAS" as const, icon: <PajamasIcon /> },
 ];
@@ -143,8 +168,8 @@ export default function SleepRitualPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-50 to-purple-50 dark:from-indigo-950 dark:to-purple-950 pb-[72px]">
-      <header className="flex items-center justify-between px-6 py-4 min-h-[60px]">
+    <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-100 to-purple-100 dark:from-indigo-950 dark:to-purple-950 pb-[72px]">
+      <header className="flex items-center justify-between px-6 py-4 min-h-[70px]">
         <div className="flex items-center gap-3">
           <MoonIcon className="w-10 h-10" />
           <div className="flex gap-1">
@@ -153,6 +178,7 @@ export default function SleepRitualPage() {
             <StarIcon className="w-5 h-5" delay={0.6} />
           </div>
         </div>
+        <DigitalClock />
         <div className="flex gap-1">
           <StarIcon className="w-6 h-6" delay={0.2} />
           <StarIcon className="w-5 h-5" delay={0.5} />
@@ -180,7 +206,7 @@ export default function SleepRitualPage() {
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold ${
                   completedSteps.has(item.step)
                     ? "bg-emerald-400 text-white"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-400"
+                    : "bg-white dark:bg-gray-700 text-gray-400 shadow"
                 }`}
                 animate={completedSteps.has(item.step) ? { scale: [1, 1.2, 1] } : {}}
               >
@@ -200,7 +226,7 @@ export default function SleepRitualPage() {
         {completedSteps.size > 0 && (
           <button
             onClick={handleReset}
-            className="mt-6 w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center opacity-50"
+            className="mt-6 w-10 h-10 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center opacity-50 shadow"
             data-testid="button-reset-ritual"
           >
             <svg viewBox="0 0 24 24" className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2">
