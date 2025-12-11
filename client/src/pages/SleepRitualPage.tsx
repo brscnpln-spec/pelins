@@ -127,6 +127,40 @@ function StarIcon({ className, delay = 0 }: { className?: string; delay?: number
   );
 }
 
+function CloudIcon({ className, delay = 0 }: { className?: string; delay?: number }) {
+  return (
+    <motion.svg 
+      viewBox="0 0 60 40" 
+      className={className}
+      animate={{ x: [0, 10, 0] }}
+      transition={{ duration: 8, repeat: Infinity, delay }}
+    >
+      <ellipse cx="30" cy="25" rx="20" ry="12" fill="white" opacity="0.15" />
+      <ellipse cx="20" cy="22" rx="12" ry="10" fill="white" opacity="0.15" />
+      <ellipse cx="40" cy="22" rx="12" ry="10" fill="white" opacity="0.15" />
+    </motion.svg>
+  );
+}
+
+function BackgroundDecorations() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <CloudIcon className="absolute top-8 left-8 w-20" delay={0} />
+      <CloudIcon className="absolute top-16 right-16 w-16" delay={2} />
+      <CloudIcon className="absolute top-28 left-1/3 w-24" delay={4} />
+      
+      <StarIcon className="absolute top-12 left-1/4 w-4" delay={0} />
+      <StarIcon className="absolute top-20 right-1/4 w-3" delay={0.5} />
+      <StarIcon className="absolute top-6 right-1/3 w-5" delay={1} />
+      <StarIcon className="absolute top-32 left-12 w-3" delay={1.5} />
+      <StarIcon className="absolute top-10 right-12 w-4" delay={2} />
+      <StarIcon className="absolute top-24 left-1/2 w-3" delay={2.5} />
+      <StarIcon className="absolute bottom-32 left-8 w-4" delay={0.8} />
+      <StarIcon className="absolute bottom-40 right-8 w-5" delay={1.2} />
+    </div>
+  );
+}
+
 const RITUAL_STEPS = [
   { step: "TEETH" as const, icon: <ToothbrushIcon /> },
   { step: "TOILET" as const, icon: <ToiletIcon /> },
@@ -181,7 +215,7 @@ export default function SleepRitualPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-100 to-purple-100 dark:from-indigo-950 dark:to-purple-950 pb-[72px]">
+      <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-900 to-purple-900 pb-[72px]">
         <div className="flex-1 flex items-center justify-center">
           <motion.div
             animate={{ rotate: 360 }}
@@ -196,8 +230,10 @@ export default function SleepRitualPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-100 to-purple-100 dark:from-indigo-950 dark:to-purple-950 pb-[72px]">
-      <header className="flex items-center justify-between px-6 py-4 min-h-[70px]">
+    <div className="flex flex-col h-screen bg-gradient-to-b from-indigo-900 to-purple-900 pb-[72px] relative overflow-hidden">
+      <BackgroundDecorations />
+      
+      <header className="flex items-center justify-between px-6 py-4 min-h-[70px] relative z-10">
         <div className="flex items-center gap-3">
           <MoonIcon className="w-10 h-10" />
           <div className="flex gap-1">
@@ -213,7 +249,7 @@ export default function SleepRitualPage() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6">
+      <main className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
         <div className="flex gap-4 sm:gap-6 flex-wrap justify-center">
           {RITUAL_STEPS.map((item) => (
             <RitualStepCard
@@ -234,7 +270,7 @@ export default function SleepRitualPage() {
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold ${
                   completedSteps.has(item.step)
                     ? "bg-emerald-400 text-white"
-                    : "bg-white dark:bg-gray-700 text-gray-400 shadow"
+                    : "bg-white/20 text-white/60 shadow"
                 }`}
                 animate={completedSteps.has(item.step) ? { scale: [1, 1.2, 1] } : {}}
               >
@@ -255,10 +291,10 @@ export default function SleepRitualPage() {
           <button
             onClick={handleReset}
             disabled={resetMutation.isPending}
-            className="mt-6 w-10 h-10 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center opacity-50 shadow"
+            className="mt-6 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shadow"
             data-testid="button-reset-ritual"
           >
-            <svg viewBox="0 0 24 24" className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
