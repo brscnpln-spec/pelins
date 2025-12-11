@@ -54,7 +54,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Weather Integration
 - Uses Open-Meteo API (no API key required)
-- Provides current conditions and 3-day forecast
+- Provides current conditions, hourly forecast for today, and 7-day daily forecast
 - Located in `server/integrations/weather.ts`
 - Configurable location via environment variables
 

@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import PageHeader from "@/components/PageHeader";
+import { format, isToday, isTomorrow, addDays, isSameDay } from "date-fns";
 import CalendarEventCard from "@/components/CalendarEventCard";
 import WeatherCard from "@/components/WeatherCard";
 import HomeStatusCard from "@/components/HomeStatusCard";
 import BottomNav from "@/components/BottomNav";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import DigitalClock from "@/components/DigitalClock";
+import ThemeToggle from "@/components/ThemeToggle";
 import { motion } from "framer-motion";
 
 interface CalendarEvent {
@@ -15,11 +16,26 @@ interface CalendarEvent {
   calendarName?: string;
 }
 
+interface HourlyForecast {
+  time: string;
+  tempC: number;
+  icon: string;
+}
+
+interface DailyForecast {
+  day: string;
+  date: string;
+  tempHighC: number;
+  tempLowC: number;
+  icon: string;
+}
+
 interface WeatherData {
   temperatureC: number;
   description: string;
   icon: string;
-  forecast?: { day: string; tempC: number; icon: string }[];
+  hourly?: HourlyForecast[];
+  daily?: DailyForecast[];
 }
 
 interface HAEntity {
@@ -44,7 +60,7 @@ function getGreeting() {
 function LoadingSpinner() {
   return (
     <motion.div
-      className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full"
+      className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
       animate={{ rotate: 360 }}
       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
     />
@@ -104,6 +120,32 @@ function HomeIcon({ className }: { className?: string }) {
   );
 }
 
+function getDayLabel(date: Date): string {
+  if (isToday(date)) return "Today";
+  if (isTomorrow(date)) return "Tomorrow";
+  return format(date, "EEEE");
+}
+
+function groupEventsByDay(events: CalendarEvent[]): Map<string, CalendarEvent[]> {
+  const groups = new Map<string, CalendarEvent[]>();
+  const today = new Date();
+  const dayAfterTomorrow = addDays(today, 2);
+
+  for (const event of events) {
+    const eventDate = new Date(event.start);
+    
+    if (isToday(eventDate) || isTomorrow(eventDate) || isSameDay(eventDate, dayAfterTomorrow)) {
+      const dayKey = format(eventDate, "yyyy-MM-dd");
+      if (!groups.has(dayKey)) {
+        groups.set(dayKey, []);
+      }
+      groups.get(dayKey)!.push(event);
+    }
+  }
+
+  return groups;
+}
+
 export default function FamilyDashboardPage() {
   const { data: calendarData, isLoading: calendarLoading } = useQuery<{ events: CalendarEvent[] }>({
     queryKey: ["/api/dashboard/calendar"],
@@ -121,73 +163,99 @@ export default function FamilyDashboardPage() {
   });
 
   const events = calendarData?.events || [];
-  const weather = weatherData || { temperatureC: 0, description: "Loading...", icon: "cloudy", forecast: [] };
+  const weather = weatherData || { temperatureC: 0, description: "Loading...", icon: "cloudy", hourly: [], daily: [] };
   const homeEntities = homeData?.entities || [];
   const homeConfigured = homeData?.configured || false;
 
+  const eventsByDay = groupEventsByDay(events);
+  const today = new Date();
+  const dayDates = [today, addDays(today, 1), addDays(today, 2)];
+
   return (
     <div className="flex flex-col h-screen bg-background pb-[72px]">
-      <PageHeader title={`${getGreeting()}, Family`} />
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center gap-4">
+          <div>
+            <h1 className="text-xl font-semibold">{getGreeting()}</h1>
+            <p className="text-sm text-muted-foreground">{format(new Date(), "EEEE, MMMM d")}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <DigitalClock className="scale-75 origin-right" />
+          <ThemeToggle />
+        </div>
+      </header>
 
-      <main className="flex-1 overflow-hidden">
-        <div className="h-full flex flex-col lg:flex-row gap-6 p-6">
-          <section className="flex-1 lg:flex-[0.6] flex flex-col min-h-0">
-            <div className="flex items-center gap-3 mb-4">
-              <CalendarIcon className="w-8 h-8" />
-              <h2 className="text-xl font-semibold" data-testid="text-section-calendar">Upcoming Events</h2>
+      <main className="flex-1 overflow-auto">
+        <div className="h-full flex flex-col lg:flex-row gap-4 p-4">
+          <section className="flex-1 lg:flex-[0.55] flex flex-col min-h-0">
+            <div className="flex items-center gap-2 mb-3">
+              <CalendarIcon className="w-6 h-6" />
+              <h2 className="text-lg font-semibold" data-testid="text-section-calendar">Upcoming Events</h2>
+              {calendarLoading && <LoadingSpinner />}
             </div>
-            <ScrollArea className="flex-1">
-              <div className="space-y-3 pr-4">
-                {calendarLoading ? (
-                  <div className="flex justify-center py-8">
-                    <LoadingSpinner />
+            
+            <div className="flex-1 flex flex-col gap-3">
+              {dayDates.map((dayDate) => {
+                const dayKey = format(dayDate, "yyyy-MM-dd");
+                const dayEvents = eventsByDay.get(dayKey) || [];
+                const dayLabel = getDayLabel(dayDate);
+
+                return (
+                  <div key={dayKey} className="flex-1 min-h-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`text-sm font-medium ${isToday(dayDate) ? "text-primary" : "text-muted-foreground"}`}>
+                        {dayLabel}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {format(dayDate, "MMM d")}
+                      </span>
+                    </div>
+                    
+                    {dayEvents.length === 0 ? (
+                      <div className="h-12 flex items-center px-3 rounded-md bg-muted/30 text-sm text-muted-foreground">
+                        No events
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {dayEvents.slice(0, 2).map((event) => (
+                          <CalendarEventCard key={event.id} event={event} compact />
+                        ))}
+                        {dayEvents.length > 2 && (
+                          <p className="text-xs text-muted-foreground px-2">
+                            +{dayEvents.length - 2} more
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
-                ) : events.length === 0 ? (
-                  <div className="flex flex-col items-center py-8 text-muted-foreground">
-                    <CalendarIcon className="w-16 h-16 opacity-50" />
-                    <p className="mt-2">No upcoming events</p>
-                  </div>
-                ) : (
-                  events.map((event) => (
-                    <CalendarEventCard key={event.id} event={event} />
-                  ))
-                )}
-              </div>
-            </ScrollArea>
+                );
+              })}
+            </div>
           </section>
 
-          <section className="flex-1 lg:flex-[0.4] flex flex-col gap-6">
+          <section className="flex-1 lg:flex-[0.45] flex flex-col gap-4 min-h-0 overflow-auto">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <SunIcon className="w-8 h-8" />
-                <h2 className="text-xl font-semibold" data-testid="text-section-weather">Weather</h2>
+              <div className="flex items-center gap-2 mb-3">
+                <SunIcon className="w-6 h-6" />
+                <h2 className="text-lg font-semibold" data-testid="text-section-weather">Weather</h2>
+                {weatherLoading && <LoadingSpinner />}
               </div>
-              {weatherLoading ? (
-                <div className="flex justify-center py-8">
-                  <LoadingSpinner />
-                </div>
-              ) : (
-                <WeatherCard weather={weather} />
-              )}
+              <WeatherCard weather={weather} />
             </div>
 
             {homeConfigured && (
               <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <HomeIcon className="w-8 h-8" />
-                  <h2 className="text-xl font-semibold" data-testid="text-section-home">Home Status</h2>
+                <div className="flex items-center gap-2 mb-3">
+                  <HomeIcon className="w-6 h-6" />
+                  <h2 className="text-lg font-semibold" data-testid="text-section-home">Home Status</h2>
+                  {homeLoading && <LoadingSpinner />}
                 </div>
-                {homeLoading ? (
-                  <div className="flex justify-center py-8">
-                    <LoadingSpinner />
-                  </div>
-                ) : (
-                  <div className="flex gap-4 flex-wrap">
-                    {homeEntities.map((entity) => (
-                      <HomeStatusCard key={entity.id} entity={entity} />
-                    ))}
-                  </div>
-                )}
+                <div className="flex gap-3 flex-wrap">
+                  {homeEntities.map((entity) => (
+                    <HomeStatusCard key={entity.id} entity={entity} />
+                  ))}
+                </div>
               </div>
             )}
           </section>

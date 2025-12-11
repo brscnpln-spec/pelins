@@ -1,8 +1,23 @@
+export interface HourlyForecast {
+  time: string;
+  tempC: number;
+  icon: string;
+}
+
+export interface DailyForecast {
+  day: string;
+  date: string;
+  tempHighC: number;
+  tempLowC: number;
+  icon: string;
+}
+
 export interface WeatherData {
   temperatureC: number;
   description: string;
   icon: string;
-  forecast?: { day: string; tempC: number; icon: string }[];
+  hourly: HourlyForecast[];
+  daily: DailyForecast[];
 }
 
 function getWeatherIcon(weatherCode: number): string {
@@ -56,7 +71,7 @@ export async function getWeather(
   longitude: number = 28.9784
 ): Promise<WeatherData> {
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max&timezone=auto&forecast_days=3`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -68,17 +83,38 @@ export async function getWeather(
     const currentTemp = data.current.temperature_2m;
     const currentCode = data.current.weather_code;
 
-    const forecast = data.daily.time.slice(1, 3).map((dateStr: string, idx: number) => ({
-      day: getDayName(new Date(dateStr)),
-      tempC: Math.round(data.daily.temperature_2m_max[idx + 1]),
-      icon: getWeatherIcon(data.daily.weather_code[idx + 1]),
-    }));
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    const hourly: HourlyForecast[] = [];
+    for (let i = 0; i < data.hourly.time.length && hourly.length < 12; i++) {
+      const hourTime = new Date(data.hourly.time[i]);
+      if (hourTime.toDateString() === now.toDateString() && hourTime.getHours() >= currentHour) {
+        hourly.push({
+          time: hourTime.toLocaleTimeString("en-US", { hour: "numeric", hour12: true }),
+          tempC: Math.round(data.hourly.temperature_2m[i]),
+          icon: getWeatherIcon(data.hourly.weather_code[i]),
+        });
+      }
+    }
+
+    const daily: DailyForecast[] = data.daily.time.map((dateStr: string, idx: number) => {
+      const date = new Date(dateStr);
+      return {
+        day: getDayName(date),
+        date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        tempHighC: Math.round(data.daily.temperature_2m_max[idx]),
+        tempLowC: Math.round(data.daily.temperature_2m_min[idx]),
+        icon: getWeatherIcon(data.daily.weather_code[idx]),
+      };
+    });
 
     return {
       temperatureC: Math.round(currentTemp),
       description: getWeatherDescription(currentCode),
       icon: getWeatherIcon(currentCode),
-      forecast,
+      hourly,
+      daily,
     };
   } catch (error) {
     console.error("Error fetching weather:", error);
@@ -86,7 +122,8 @@ export async function getWeather(
       temperatureC: 20,
       description: "Unable to fetch weather",
       icon: "cloudy",
-      forecast: [],
+      hourly: [],
+      daily: [],
     };
   }
 }

@@ -11,6 +11,7 @@ interface CalendarEvent {
 
 interface CalendarEventCardProps {
   event: CalendarEvent;
+  compact?: boolean;
 }
 
 const calendarColors: Record<string, string> = {
@@ -20,10 +21,25 @@ const calendarColors: Record<string, string> = {
   default: "bg-primary",
 };
 
-export default function CalendarEventCard({ event }: CalendarEventCardProps) {
+export default function CalendarEventCard({ event, compact = false }: CalendarEventCardProps) {
   const startTime = format(new Date(event.start), "HH:mm");
   const endTime = format(new Date(event.end), "HH:mm");
   const colorClass = calendarColors[event.calendarName || ""] || calendarColors.default;
+
+  if (compact) {
+    return (
+      <div
+        className="flex items-center gap-3 p-2 bg-card rounded-md border border-card-border"
+        data-testid={`event-card-${event.id}`}
+      >
+        <div className={`w-1 h-8 rounded-full ${colorClass}`} />
+        <div className="flex-1 min-w-0 flex items-center gap-3">
+          <span className="text-xs text-muted-foreground whitespace-nowrap">{startTime}</span>
+          <p className="text-sm font-medium truncate">{event.summary}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
