@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format, isToday, isTomorrow, addDays, isSameDay } from "date-fns";
 import BottomNav from "@/components/BottomNav";
@@ -71,6 +72,15 @@ function groupEventsByDay(events: CalendarEvent[]): Map<string, CalendarEvent[]>
 }
 
 export default function FamilyDashboardPage() {
+  useEffect(() => {
+    if (!document.getElementById("weatherwidget-io-js")) {
+      const script = document.createElement("script");
+      script.id = "weatherwidget-io-js";
+      script.src = "https://weatherwidget.io/js/widget.min.js";
+      document.body.appendChild(script);
+    }
+  }, []);
+
   const { data: calendarData, isLoading: calendarLoading } = useQuery<{ events: CalendarEvent[] }>({
     queryKey: ["/api/dashboard/calendar"],
     refetchInterval: 60000,
@@ -173,17 +183,19 @@ export default function FamilyDashboardPage() {
           </div>
         </section>
 
-        <section>
+        <section data-testid="section-weather">
           <Card>
-            <CardContent className="p-0 overflow-hidden">
-              <iframe
-                src="https://abpwidget.accuweather.com/widget/abpwidget/index.html#abp_nocode_entra?ismetric=true&culture=tr&cities=Munich,DE;Istanbul,TR"
-                className="w-full border-0"
-                style={{ height: "320px" }}
-                title="Weather"
-                data-testid="iframe-weather"
-                sandbox="allow-scripts allow-same-origin"
-              />
+            <CardContent className="p-3">
+              <a 
+                className="weatherwidget-io" 
+                href="https://forecast7.com/en/48d1411d58/munich/" 
+                data-label_1="MUNICH" 
+                data-label_2="WEATHER" 
+                data-theme="original"
+                data-testid="widget-weather"
+              >
+                MUNICH WEATHER
+              </a>
             </CardContent>
           </Card>
         </section>
