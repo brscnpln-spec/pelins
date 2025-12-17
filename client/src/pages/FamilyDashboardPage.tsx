@@ -4,7 +4,8 @@ import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Card, CardContent } from "@/components/ui/card";
-import { Cloud, Sun, CloudRain, Snowflake, CloudSun, Calendar } from "lucide-react";
+import { Calendar, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 interface CalendarEvent {
@@ -13,28 +14,6 @@ interface CalendarEvent {
   end: string;
   summary: string;
   calendarName?: string;
-}
-
-interface HourlyForecast {
-  time: string;
-  tempC: number;
-  icon: string;
-}
-
-interface DailyForecast {
-  day: string;
-  date: string;
-  tempHighC: number;
-  tempLowC: number;
-  icon: string;
-}
-
-interface WeatherData {
-  temperatureC: number;
-  description: string;
-  icon: string;
-  hourly?: HourlyForecast[];
-  daily?: DailyForecast[];
 }
 
 interface HAEntity {
@@ -48,14 +27,6 @@ interface HomeStatusResponse {
   configured: boolean;
   entities: HAEntity[];
 }
-
-const iconMap: Record<string, typeof Cloud> = {
-  sunny: Sun,
-  cloudy: Cloud,
-  "partly-cloudy": CloudSun,
-  rain: CloudRain,
-  snow: Snowflake,
-};
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -72,11 +43,6 @@ function LoadingSpinner() {
       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
     />
   );
-}
-
-function WeatherIcon({ icon, className }: { icon: string; className?: string }) {
-  const IconComponent = iconMap[icon] || Cloud;
-  return <IconComponent className={className} />;
 }
 
 function getDayLabel(date: Date): string {
@@ -110,18 +76,12 @@ export default function FamilyDashboardPage() {
     refetchInterval: 60000,
   });
 
-  const { data: weatherData, isLoading: weatherLoading } = useQuery<WeatherData>({
-    queryKey: ["/api/dashboard/weather"],
-    refetchInterval: 300000,
-  });
-
   const { data: homeData } = useQuery<HomeStatusResponse>({
     queryKey: ["/api/dashboard/home-status"],
     refetchInterval: 30000,
   });
 
   const events = calendarData?.events || [];
-  const weather = weatherData || { temperatureC: 0, description: "Loading...", icon: "cloudy", hourly: [], daily: [] };
   const homeEntities = homeData?.entities || [];
   const homeConfigured = homeData?.configured || false;
 
@@ -143,6 +103,15 @@ export default function FamilyDashboardPage() {
           <p className="text-xs text-muted-foreground">{format(new Date(), "EEEE, MMMM d")}</p>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => window.location.reload()}
+            data-testid="button-refresh-dashboard"
+            className="min-w-[48px] min-h-[48px]"
+          >
+            <RefreshCw className="w-6 h-6" />
+          </Button>
           <DigitalClock className="scale-[0.6] origin-right" />
           <ThemeToggle />
         </div>
@@ -205,54 +174,16 @@ export default function FamilyDashboardPage() {
         </section>
 
         <section>
-          <div className="flex items-center gap-2 mb-2">
-            <Sun className="w-4 h-4 text-amber-500" />
-            <span className="text-sm font-medium">Weather - Munich</span>
-            {weatherLoading && <LoadingSpinner />}
-          </div>
-
-          <div className="flex gap-2 mb-2">
-            <Card className="flex-shrink-0">
-              <CardContent className="p-3 flex items-center gap-3">
-                <div className="w-12 h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-900 rounded-lg">
-                  <WeatherIcon icon={weather.icon} className="w-7 h-7 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{weather.temperatureC}°C</p>
-                  <p className="text-xs text-muted-foreground">{weather.description}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="flex-1 min-w-0">
-              <CardContent className="p-3">
-                <p className="text-xs text-muted-foreground mb-2">Today</p>
-                <div className="flex gap-3 overflow-x-auto">
-                  {(weather.hourly || []).slice(0, 6).map((hour, idx) => (
-                    <div key={idx} className="flex flex-col items-center min-w-[36px]">
-                      <span className="text-[10px] text-muted-foreground">{hour.time}</span>
-                      <WeatherIcon icon={hour.icon} className="w-4 h-4 my-0.5 text-muted-foreground" />
-                      <span className="text-xs font-medium">{hour.tempC}°</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
           <Card>
-            <CardContent className="p-3">
-              <p className="text-xs text-muted-foreground mb-2">7-Day Forecast</p>
-              <div className="flex justify-between">
-                {(weather.daily || []).map((day, idx) => (
-                  <div key={idx} className="flex flex-col items-center">
-                    <span className="text-[10px] text-muted-foreground">{day.day}</span>
-                    <WeatherIcon icon={day.icon} className="w-5 h-5 my-1 text-muted-foreground" />
-                    <span className="text-xs font-medium">{day.tempHighC}°</span>
-                    <span className="text-[10px] text-muted-foreground">{day.tempLowC}°</span>
-                  </div>
-                ))}
-              </div>
+            <CardContent className="p-0 overflow-hidden">
+              <iframe
+                src="https://abpwidget.accuweather.com/widget/abpwidget/index.html#abp_nocode_entra?ismetric=true&culture=tr&cities=Munich,DE;Istanbul,TR"
+                className="w-full border-0"
+                style={{ height: "320px" }}
+                title="Weather"
+                data-testid="iframe-weather"
+                sandbox="allow-scripts allow-same-origin"
+              />
             </CardContent>
           </Card>
         </section>
