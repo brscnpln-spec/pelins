@@ -128,59 +128,72 @@ export default function FamilyDashboardPage() {
       </header>
 
       <main className="flex-1 overflow-auto p-3 space-y-3">
-        <section>
-          <div className="flex items-center gap-2 mb-2">
-            <Calendar className="w-4 h-4 text-amber-500" />
-            <span className="text-sm font-medium">Upcoming Events</span>
+        <section data-testid="section-calendar">
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="w-5 h-5 text-amber-500" />
+            <span className="text-base font-semibold">Upcoming Events</span>
             {calendarLoading && <LoadingSpinner />}
           </div>
           
-          <div className="flex gap-2">
-            <Card className="flex-[2] min-w-0">
-              <CardContent className="p-3">
-                <p className="text-xs font-medium text-primary mb-2">Today</p>
+          <Card>
+            <CardContent className="p-4">
+              <div className="mb-4">
+                <p className="text-sm font-bold text-primary mb-3">Today</p>
                 {todayEvents.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">No events</p>
+                  <p className="text-sm text-muted-foreground">No events today</p>
                 ) : (
-                  <div className="space-y-1">
-                    {todayEvents.slice(0, 3).map((event) => (
-                      <div key={event.id} className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground w-10">
+                  <div className="space-y-2">
+                    {todayEvents.map((event) => (
+                      <div key={event.id} className="flex items-start gap-3 py-1 border-l-2 border-primary pl-3">
+                        <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
                           {format(new Date(event.start), "HH:mm")}
                         </span>
-                        <span className="text-xs font-medium truncate">{event.summary}</span>
+                        <span className="text-sm font-bold">{event.summary}</span>
                       </div>
                     ))}
-                    {todayEvents.length > 3 && (
-                      <p className="text-xs text-muted-foreground">+{todayEvents.length - 3} more</p>
-                    )}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card className="flex-1 min-w-0">
-              <CardContent className="p-3">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Tomorrow</p>
-                {tomorrowEvents.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">-</p>
-                ) : (
-                  <p className="text-xs">{tomorrowEvents.length} event{tomorrowEvents.length > 1 ? "s" : ""}</p>
-                )}
-              </CardContent>
-            </Card>
+              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">Tomorrow</p>
+                  {tomorrowEvents.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">No events</p>
+                  ) : (
+                    <div className="space-y-1">
+                      {tomorrowEvents.map((event) => (
+                        <div key={event.id} className="flex items-start gap-2">
+                          <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                            {format(new Date(event.start), "HH:mm")}
+                          </span>
+                          <span className="text-xs">{event.summary}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-            <Card className="flex-1 min-w-0">
-              <CardContent className="p-3">
-                <p className="text-xs font-medium text-muted-foreground mb-2">{format(addDays(today, 2), "EEE")}</p>
-                {dayAfterEvents.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">-</p>
-                ) : (
-                  <p className="text-xs">{dayAfterEvents.length} event{dayAfterEvents.length > 1 ? "s" : ""}</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">{format(addDays(today, 2), "EEEE")}</p>
+                  {dayAfterEvents.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">No events</p>
+                  ) : (
+                    <div className="space-y-1">
+                      {dayAfterEvents.map((event) => (
+                        <div key={event.id} className="flex items-start gap-2">
+                          <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                            {format(new Date(event.start), "HH:mm")}
+                          </span>
+                          <span className="text-xs">{event.summary}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </section>
 
         <section data-testid="section-weather">
