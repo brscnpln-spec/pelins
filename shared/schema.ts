@@ -46,3 +46,12 @@ export type InsertSetting = z.infer<typeof insertSettingSchema>;
 
 export const RitualStepEnum = z.enum(["TEETH", "TOILET", "PAJAMAS"]);
 export type RitualStep = z.infer<typeof RitualStepEnum>;
+
+export const MorningRitualStepEnum = z.enum([
+  "MORNING_TOILET",
+  "MORNING_BREAKFAST", 
+  "MORNING_CLOTHES",
+  "MORNING_FOREST_CLOTHES",
+  "MORNING_LUNCH"
+]);
+export type MorningRitualStep = z.infer<typeof MorningRitualStepEnum>;

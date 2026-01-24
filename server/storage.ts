@@ -10,12 +10,13 @@ import {
   type InsertSetting,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, like, notLike } from "drizzle-orm";
 
 export interface IStorage {
   getRitualStatus(date: string): Promise<RitualCompletion[]>;
   completeRitualStep(data: InsertRitualCompletion): Promise<RitualCompletion>;
   resetRitual(date: string): Promise<void>;
+  resetMorningRitual(date: string): Promise<void>;
   
   createMonsterScan(data: InsertMonsterScan): Promise<MonsterScan>;
   getMonsterScanHistory(limit?: number): Promise<MonsterScan[]>;
@@ -58,7 +59,23 @@ export class DatabaseStorage implements IStorage {
   async resetRitual(date: string): Promise<void> {
     await db
       .delete(ritualCompletions)
-      .where(eq(ritualCompletions.date, date));
+      .where(
+        and(
+          eq(ritualCompletions.date, date),
+          notLike(ritualCompletions.step, "MORNING_%")
+        )
+      );
+  }
+
+  async resetMorningRitual(date: string): Promise<void> {
+    await db
+      .delete(ritualCompletions)
+      .where(
+        and(
+          eq(ritualCompletions.date, date),
+          like(ritualCompletions.step, "MORNING_%")
+        )
+      );
   }
 
   async createMonsterScan(data: InsertMonsterScan): Promise<MonsterScan> {

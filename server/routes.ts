@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { RitualStepEnum } from "@shared/schema";
+import { RitualStepEnum, MorningRitualStepEnum } from "@shared/schema";
 import { getUpcomingEvents, getAuthUrl, exchangeCodeForTokens } from "./integrations/googleCalendar";
 import { getWeather } from "./integrations/weather";
 import {
@@ -81,6 +81,63 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error triggering sleep mode:", error);
       res.status(500).json({ error: "Failed to trigger sleep mode" });
+    }
+  });
+
+  app.get("/api/morning-ritual/status", async (req, res) => {
+    try {
+      const date = (req.query.date as string) || new Date().toISOString().split("T")[0];
+      const completions = await storage.getRitualStatus(date);
+      const completedSteps = completions
+        .filter((c) => c.step.startsWith("MORNING_"))
+        .map((c) => c.step);
+      res.json({ date, completedSteps });
+    } catch (error) {
+      console.error("Error getting morning ritual status:", error);
+      res.status(500).json({ error: "Failed to get morning ritual status" });
+    }
+  });
+
+  app.post("/api/morning-ritual/complete", async (req, res) => {
+    try {
+      const { date, step, totalSteps } = req.body;
+
+      if (!date || !step) {
+        return res.status(400).json({ error: "Date and step are required" });
+      }
+
+      const validStep = MorningRitualStepEnum.safeParse(step);
+      if (!validStep.success) {
+        return res.status(400).json({ error: "Invalid step" });
+      }
+
+      const completion = await storage.completeRitualStep({ date, step });
+      const allCompletions = await storage.getRitualStatus(date);
+      const completedSteps = allCompletions
+        .filter((c) => c.step.startsWith("MORNING_"))
+        .map((c) => c.step);
+
+      const allDone = completedSteps.length === (totalSteps || 3);
+
+      res.json({ success: true, completedSteps, allDone });
+    } catch (error) {
+      console.error("Error completing morning ritual step:", error);
+      res.status(500).json({ error: "Failed to complete step" });
+    }
+  });
+
+  app.post("/api/morning-ritual/reset", async (req, res) => {
+    try {
+      const { date } = req.body;
+      if (!date) {
+        return res.status(400).json({ error: "Date is required" });
+      }
+
+      await storage.resetMorningRitual(date);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error resetting morning ritual:", error);
+      res.status(500).json({ error: "Failed to reset morning ritual" });
     }
   });
 
