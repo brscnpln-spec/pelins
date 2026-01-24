@@ -36,6 +36,31 @@ function ShieldIcon({ active }: { active: boolean }) {
   );
 }
 
+function SunIcon({ active }: { active: boolean }) {
+  return (
+    <svg viewBox="0 0 32 32" className="w-8 h-8">
+      <circle
+        cx="16"
+        cy="16"
+        r="6"
+        fill={active ? "#FDE047" : "none"}
+        stroke={active ? "#FACC15" : "currentColor"}
+        strokeWidth="2"
+      />
+      <g stroke={active ? "#FACC15" : "currentColor"} strokeWidth="2" strokeLinecap="round">
+        <line x1="16" y1="4" x2="16" y2="7" />
+        <line x1="16" y1="25" x2="16" y2="28" />
+        <line x1="4" y1="16" x2="7" y2="16" />
+        <line x1="25" y1="16" x2="28" y2="16" />
+        <line x1="7.5" y1="7.5" x2="9.6" y2="9.6" />
+        <line x1="22.4" y1="22.4" x2="24.5" y2="24.5" />
+        <line x1="7.5" y1="24.5" x2="9.6" y2="22.4" />
+        <line x1="22.4" y1="9.6" x2="24.5" y2="7.5" />
+      </g>
+    </svg>
+  );
+}
+
 function HomeIcon({ active }: { active: boolean }) {
   return (
     <svg viewBox="0 0 32 32" className="w-8 h-8">
@@ -60,6 +85,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: "/", icon: MoonIcon },
+  { path: "/morning", icon: SunIcon },
   { path: "/monster", icon: ShieldIcon },
   { path: "/dashboard", icon: HomeIcon },
 ];

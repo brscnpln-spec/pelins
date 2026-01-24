@@ -2,16 +2,14 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export type RitualStep = "TEETH" | "TOILET" | "PAJAMAS";
-
 interface RitualStepCardProps {
-  step: RitualStep;
+  step: string;
   icon: JSX.Element;
   completed: boolean;
   onComplete: () => void;
 }
 
-const stepColors: Record<RitualStep, { bg: string; border: string; completeBg: string }> = {
+const stepColors: Record<string, { bg: string; border: string; completeBg: string }> = {
   TEETH: { 
     bg: "bg-sky-100 dark:bg-sky-900", 
     border: "border-sky-300 dark:border-sky-700",
@@ -27,6 +25,37 @@ const stepColors: Record<RitualStep, { bg: string; border: string; completeBg: s
     border: "border-violet-300 dark:border-violet-700",
     completeBg: "bg-emerald-100 dark:bg-emerald-900"
   },
+  MORNING_TOILET: { 
+    bg: "bg-amber-100 dark:bg-amber-900", 
+    border: "border-amber-300 dark:border-amber-700",
+    completeBg: "bg-emerald-100 dark:bg-emerald-900"
+  },
+  MORNING_BREAKFAST: { 
+    bg: "bg-orange-100 dark:bg-orange-900", 
+    border: "border-orange-300 dark:border-orange-700",
+    completeBg: "bg-emerald-100 dark:bg-emerald-900"
+  },
+  MORNING_CLOTHES: { 
+    bg: "bg-blue-100 dark:bg-blue-900", 
+    border: "border-blue-300 dark:border-blue-700",
+    completeBg: "bg-emerald-100 dark:bg-emerald-900"
+  },
+  MORNING_FOREST_CLOTHES: { 
+    bg: "bg-green-100 dark:bg-green-900", 
+    border: "border-green-300 dark:border-green-700",
+    completeBg: "bg-emerald-100 dark:bg-emerald-900"
+  },
+  MORNING_LUNCH: { 
+    bg: "bg-red-100 dark:bg-red-900", 
+    border: "border-red-300 dark:border-red-700",
+    completeBg: "bg-emerald-100 dark:bg-emerald-900"
+  },
+};
+
+const defaultColors = {
+  bg: "bg-gray-100 dark:bg-gray-900", 
+  border: "border-gray-300 dark:border-gray-700",
+  completeBg: "bg-emerald-100 dark:bg-emerald-900"
 };
 
 export default function RitualStepCard({
@@ -36,7 +65,7 @@ export default function RitualStepCard({
   onComplete,
 }: RitualStepCardProps) {
   const [showConfetti, setShowConfetti] = useState(false);
-  const colors = stepColors[step];
+  const colors = stepColors[step] || defaultColors;
 
   const handleTap = () => {
     if (!completed) {

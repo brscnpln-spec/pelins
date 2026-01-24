@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SleepRitualPage from "@/pages/SleepRitualPage";
+import MorningRitualPage from "@/pages/MorningRitualPage";
 import MonsterDetectorPage from "@/pages/MonsterDetectorPage";
 import FamilyDashboardPage from "@/pages/FamilyDashboardPage";
 import NotFound from "@/pages/not-found";
@@ -12,6 +13,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={SleepRitualPage} />
+      <Route path="/morning" component={MorningRitualPage} />
       <Route path="/monster" component={MonsterDetectorPage} />
       <Route path="/dashboard" component={FamilyDashboardPage} />
       <Route component={NotFound} />
