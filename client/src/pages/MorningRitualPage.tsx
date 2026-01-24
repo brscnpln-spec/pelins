@@ -327,6 +327,7 @@ export default function MorningRitualPage() {
       <CelebrationOverlay
         show={showCelebration}
         message="Great morning!"
+        theme="morning"
         onComplete={() => setShowCelebration(false)}
       />
 
