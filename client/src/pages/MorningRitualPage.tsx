@@ -6,12 +6,12 @@ import CelebrationOverlay from "@/components/CelebrationOverlay";
 import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
 import { useState, useEffect, useMemo } from "react";
-import { Bath, UtensilsCrossed, Shirt, TreePine, ShoppingBag } from "lucide-react";
+import { Droplets, UtensilsCrossed, Shirt, TreePine, ShoppingBag } from "lucide-react";
 
 function ToiletIcon() {
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <Bath className="w-16 h-16 text-amber-500" strokeWidth={1.5} />
+      <Droplets className="w-16 h-16 text-amber-500" strokeWidth={1.5} />
     </div>
   );
 }
