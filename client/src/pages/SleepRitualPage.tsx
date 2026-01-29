@@ -6,62 +6,29 @@ import CelebrationOverlay from "@/components/CelebrationOverlay";
 import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
 import { useState, useEffect } from "react";
+import { Sparkles, Bath, Shirt } from "lucide-react";
 
 function ToothbrushIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* Handle */}
-      <rect x="36" y="8" width="8" height="50" rx="4" fill="#3B82F6" />
-      {/* Brush head */}
-      <rect x="30" y="58" width="20" height="32" rx="4" fill="#60A5FA" />
-      {/* Bristles */}
-      <rect x="33" y="62" width="4" height="12" rx="1" fill="white" />
-      <rect x="38" y="62" width="4" height="12" rx="1" fill="white" />
-      <rect x="43" y="62" width="4" height="12" rx="1" fill="white" />
-      {/* Sparkles */}
-      <circle cx="22" cy="20" r="4" fill="#93C5FD" />
-      <circle cx="58" cy="28" r="3" fill="#93C5FD" />
-      <circle cx="24" cy="75" r="3" fill="#93C5FD" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <Sparkles className="w-16 h-16 text-sky-500" strokeWidth={1.5} />
+    </div>
   );
 }
 
 function ToiletIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* Tank */}
-      <rect x="25" y="12" width="30" height="28" rx="4" fill="#FCD34D" />
-      {/* Flush button */}
-      <rect x="36" y="18" width="8" height="6" rx="2" fill="#FBBF24" />
-      {/* Bowl back */}
-      <rect x="20" y="38" width="40" height="24" rx="6" fill="white" stroke="#FBBF24" strokeWidth="3" />
-      {/* Seat */}
-      <ellipse cx="40" cy="72" rx="26" ry="16" fill="white" stroke="#FBBF24" strokeWidth="3" />
-      <ellipse cx="40" cy="70" rx="18" ry="10" fill="#FEF3C7" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <Bath className="w-16 h-16 text-amber-500" strokeWidth={1.5} />
+    </div>
   );
 }
 
 function PajamasIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* Pajama top */}
-      <path d="M28 20 L40 14 L52 20 L55 55 L25 55 Z" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="3" />
-      {/* Left sleeve */}
-      <path d="M12 28 L28 20 L28 38 L12 34 Z" fill="#C4B5FD" stroke="#A78BFA" strokeWidth="2" />
-      {/* Right sleeve */}
-      <path d="M68 28 L52 20 L52 38 L68 34 Z" fill="#C4B5FD" stroke="#A78BFA" strokeWidth="2" />
-      {/* Buttons */}
-      <circle cx="40" cy="30" r="3" fill="#A78BFA" />
-      <circle cx="40" cy="40" r="3" fill="#A78BFA" />
-      <circle cx="40" cy="50" r="3" fill="#A78BFA" />
-      {/* Pajama pants */}
-      <rect x="26" y="55" width="12" height="35" rx="4" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="2" />
-      <rect x="42" y="55" width="12" height="35" rx="4" fill="#DDD6FE" stroke="#A78BFA" strokeWidth="2" />
-      {/* Moon decoration */}
-      <circle cx="32" cy="35" r="4" fill="#A78BFA" opacity="0.5" />
-      <circle cx="48" cy="35" r="4" fill="#A78BFA" opacity="0.5" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <Shirt className="w-16 h-16 text-violet-500" strokeWidth={1.5} />
+    </div>
   );
 }
 

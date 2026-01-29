@@ -6,102 +6,45 @@ import CelebrationOverlay from "@/components/CelebrationOverlay";
 import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
 import { useState, useEffect, useMemo } from "react";
+import { Bath, UtensilsCrossed, Shirt, TreePine, ShoppingBag } from "lucide-react";
 
 function ToiletIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* Tank */}
-      <rect x="25" y="12" width="30" height="28" rx="4" fill="#FCD34D" />
-      {/* Flush button */}
-      <rect x="36" y="18" width="8" height="6" rx="2" fill="#FBBF24" />
-      {/* Bowl back */}
-      <rect x="20" y="38" width="40" height="24" rx="6" fill="white" stroke="#FBBF24" strokeWidth="3" />
-      {/* Seat */}
-      <ellipse cx="40" cy="72" rx="26" ry="16" fill="white" stroke="#FBBF24" strokeWidth="3" />
-      <ellipse cx="40" cy="70" rx="18" ry="10" fill="#FEF3C7" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <Bath className="w-16 h-16 text-amber-500" strokeWidth={1.5} />
+    </div>
   );
 }
 
 function BreakfastIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* Plate */}
-      <ellipse cx="40" cy="72" rx="32" ry="14" fill="white" stroke="#F97316" strokeWidth="3" />
-      <ellipse cx="40" cy="70" rx="24" ry="9" fill="#FED7AA" />
-      {/* Pancakes stack */}
-      <ellipse cx="40" cy="52" rx="18" ry="6" fill="#FBBF24" stroke="#F59E0B" strokeWidth="2" />
-      <ellipse cx="40" cy="44" rx="16" ry="5" fill="#FCD34D" stroke="#F59E0B" strokeWidth="2" />
-      <ellipse cx="40" cy="37" rx="14" ry="4" fill="#FDE047" stroke="#F59E0B" strokeWidth="2" />
-      {/* Butter on top */}
-      <rect x="35" y="30" width="10" height="6" rx="1" fill="#FEF3C7" stroke="#FBBF24" strokeWidth="1" />
-      {/* Steam */}
-      <path d="M30 18 Q32 12 30 8" stroke="#94A3B8" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
-      <path d="M40 15 Q42 9 40 5" stroke="#94A3B8" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
-      <path d="M50 18 Q52 12 50 8" stroke="#94A3B8" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <UtensilsCrossed className="w-16 h-16 text-orange-500" strokeWidth={1.5} />
+    </div>
   );
 }
 
 function ClothesIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* T-shirt body */}
-      <path d="M28 28 L40 22 L52 28 L52 75 L28 75 Z" fill="#60A5FA" stroke="#3B82F6" strokeWidth="3" />
-      {/* Left sleeve */}
-      <path d="M12 32 L28 28 L28 45 L12 40 Z" fill="#93C5FD" stroke="#3B82F6" strokeWidth="2" />
-      {/* Right sleeve */}
-      <path d="M68 32 L52 28 L52 45 L68 40 Z" fill="#93C5FD" stroke="#3B82F6" strokeWidth="2" />
-      {/* Collar */}
-      <path d="M35 22 L40 30 L45 22" fill="#60A5FA" stroke="#3B82F6" strokeWidth="2" />
-      {/* Star decoration */}
-      <polygon points="40,40 42,46 48,46 43,50 45,56 40,52 35,56 37,50 32,46 38,46" fill="#FDE047" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <Shirt className="w-16 h-16 text-blue-500" strokeWidth={1.5} />
+    </div>
   );
 }
 
 function ForestClothesIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* Jacket body */}
-      <path d="M26 28 L40 22 L54 28 L54 65 L26 65 Z" fill="#22C55E" stroke="#16A34A" strokeWidth="3" />
-      {/* Left sleeve */}
-      <path d="M10 34 L26 28 L26 48 L10 42 Z" fill="#4ADE80" stroke="#16A34A" strokeWidth="2" />
-      {/* Right sleeve */}
-      <path d="M70 34 L54 28 L54 48 L70 42 Z" fill="#4ADE80" stroke="#16A34A" strokeWidth="2" />
-      {/* Hood */}
-      <path d="M30 22 L40 12 L50 22" fill="#16A34A" stroke="#16A34A" strokeWidth="2" />
-      {/* Zipper */}
-      <line x1="40" y1="28" x2="40" y2="65" stroke="#16A34A" strokeWidth="3" />
-      {/* Pants */}
-      <rect x="28" y="65" width="10" height="25" rx="3" fill="#22C55E" stroke="#16A34A" strokeWidth="2" />
-      <rect x="42" y="65" width="10" height="25" rx="3" fill="#22C55E" stroke="#16A34A" strokeWidth="2" />
-      {/* Tree icon */}
-      <polygon points="40,35 46,48 34,48" fill="#86EFAC" />
-      <rect x="38" y="48" width="4" height="6" fill="#86EFAC" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <TreePine className="w-16 h-16 text-green-500" strokeWidth={1.5} />
+    </div>
   );
 }
 
 function LunchBoxIcon() {
   return (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      {/* Main box */}
-      <rect x="15" y="35" width="50" height="45" rx="6" fill="#EF4444" stroke="#DC2626" strokeWidth="3" />
-      {/* Lid */}
-      <rect x="15" y="35" width="50" height="14" rx="4" fill="#F87171" stroke="#DC2626" strokeWidth="2" />
-      {/* Handle */}
-      <path d="M30 35 L30 25 Q40 18 50 25 L50 35" fill="none" stroke="#DC2626" strokeWidth="4" strokeLinecap="round" />
-      {/* Latch */}
-      <rect x="35" y="46" width="10" height="6" rx="2" fill="#FCA5A5" />
-      {/* Food compartments visible */}
-      <rect x="20" y="55" width="17" height="20" rx="2" fill="white" stroke="#DC2626" strokeWidth="1.5" />
-      <rect x="43" y="55" width="17" height="20" rx="2" fill="white" stroke="#DC2626" strokeWidth="1.5" />
-      {/* Food items */}
-      <circle cx="28" cy="65" r="5" fill="#FBBF24" />
-      <ellipse cx="52" cy="62" rx="5" ry="3" fill="#22C55E" />
-      <ellipse cx="52" cy="68" rx="5" ry="3" fill="#F97316" />
-    </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <ShoppingBag className="w-16 h-16 text-red-500" strokeWidth={1.5} />
+    </div>
   );
 }
 
