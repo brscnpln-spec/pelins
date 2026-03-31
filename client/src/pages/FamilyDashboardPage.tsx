@@ -122,16 +122,16 @@ function MiniCalendar({ today }: { today: Date }) {
   const dayHeaders = ["Pz", "Sa", "Ça", "Pe", "Cu", "Ct", "Pa"];
 
   return (
-    <div className="select-none">
-      <div className="flex items-center justify-between mb-2 px-1">
+    <div className="select-none w-full">
+      <div className="flex items-center justify-between mb-1.5 px-0.5">
         <ChevronLeft className="w-3 h-3 text-muted-foreground" />
-        <span className="text-xs font-semibold tracking-wide">
+        <span className="text-[11px] font-semibold tracking-wide">
           {format(today, "MMMM yyyy")}
         </span>
         <ChevronRight className="w-3 h-3 text-muted-foreground" />
       </div>
 
-      <div className="grid grid-cols-7 mb-1">
+      <div className="grid grid-cols-7 mb-0.5">
         {dayHeaders.map((d) => (
           <div key={d} className="text-center text-[9px] font-semibold text-muted-foreground py-0.5">
             {d}
@@ -149,10 +149,10 @@ function MiniCalendar({ today }: { today: Date }) {
             <div
               key={day.toISOString()}
               className={cn(
-                "flex items-center justify-center text-[10px] font-medium h-5 w-5 mx-auto rounded-full",
+                "flex items-center justify-center text-[10px] font-medium h-6 w-6 mx-auto rounded-full",
                 todayCell
                   ? "bg-blue-500 text-white font-bold"
-                  : "text-foreground hover:bg-muted"
+                  : "text-foreground"
               )}
             >
               {format(day, "d")}
@@ -235,44 +235,39 @@ export default function FamilyDashboardPage() {
           <Card className="overflow-hidden">
             <CardContent className="p-0">
               <div className="flex">
-                {/* LEFT PANEL — date heading + event list */}
-                <div className="flex-1 p-4 pr-3 border-r border-border overflow-hidden">
-                  <h2 className="text-base font-bold mb-3 leading-tight">
+                {/* LEFT PANEL — date heading + event list (narrower) */}
+                <div className="w-[42%] p-3 pr-2 border-r border-border overflow-hidden">
+                  <h2 className="text-xs font-bold mb-2 leading-tight text-muted-foreground uppercase tracking-wide">
                     {format(today, "EEEE, d MMMM")}
                   </h2>
 
-                  {upcomingDays.map(({ date, label, dayEvents }) => {
+                  {upcomingDays.slice(0, 2).map(({ date, label, dayEvents }) => {
                     if (!isToday(date) && dayEvents.length === 0) return null;
                     return (
-                      <div key={label} className="mb-3 last:mb-0">
-                        <p className="text-[10px] font-bold tracking-widest text-muted-foreground mb-1.5">
+                      <div key={label} className="mb-2 last:mb-0">
+                        <p className="text-[9px] font-bold tracking-widest text-muted-foreground mb-1">
                           {label}
                         </p>
                         {dayEvents.length === 0 ? (
-                          <p className="text-xs text-muted-foreground italic pl-3">Etkinlik yok</p>
+                          <p className="text-[11px] text-muted-foreground italic pl-2">Etkinlik yok</p>
                         ) : (
-                          <div className="space-y-2">
+                          <div className="space-y-1.5">
                             {dayEvents.map((event) => {
                               const color = getEventColor(globalEventIndex++);
                               const allDay = isAllDay(event);
                               return (
-                                <div key={event.id} className="flex items-start gap-2.5">
+                                <div key={event.id} className="flex items-start gap-2">
                                   <div
-                                    className="w-[3px] rounded-full self-stretch min-h-[28px] flex-shrink-0"
+                                    className="w-[3px] rounded-full self-stretch min-h-[20px] flex-shrink-0"
                                     style={{ backgroundColor: color }}
                                   />
                                   <div className="min-w-0">
-                                    <p className="text-sm font-semibold leading-tight truncate">
+                                    <p className="text-xs font-semibold leading-tight truncate">
                                       {event.summary}
                                     </p>
-                                    {!allDay && (
-                                      <p className="text-[11px] text-muted-foreground">
-                                        {formatEventTime(event.start)} – {formatEventTime(event.end)}
-                                      </p>
-                                    )}
-                                    {allDay && (
-                                      <p className="text-[11px] text-muted-foreground">Tüm gün</p>
-                                    )}
+                                    <p className="text-[10px] text-muted-foreground">
+                                      {allDay ? "Tüm gün" : `${formatEventTime(event.start)} – ${formatEventTime(event.end)}`}
+                                    </p>
                                   </div>
                                 </div>
                               );
@@ -284,24 +279,24 @@ export default function FamilyDashboardPage() {
                   })}
                 </div>
 
-                {/* RIGHT PANEL — mini monthly calendar + today's events legend */}
-                <div className="w-[160px] flex-shrink-0 p-3 flex flex-col gap-3">
+                {/* RIGHT PANEL — mini monthly calendar + today's events legend (wider) */}
+                <div className="flex-1 p-3 flex flex-col gap-2">
                   <MiniCalendar today={today} />
 
                   {todayEvents.length > 0 && (
-                    <div className="space-y-1 pt-2 border-t border-border">
+                    <div className="space-y-0.5 pt-1.5 border-t border-border">
                       {todayEvents.map((event, i) => {
                         const color = getEventColor(i);
                         const allDay = isAllDay(event);
                         return (
-                          <div key={event.id} className="flex items-start gap-1.5 min-w-0">
+                          <div key={event.id} className="flex items-center gap-1.5 min-w-0">
                             <div
-                              className="w-1.5 h-1.5 rounded-full mt-1 flex-shrink-0"
+                              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                               style={{ backgroundColor: color }}
                             />
                             <p className="text-[10px] text-muted-foreground leading-tight truncate">
-                              {allDay ? "" : `${formatEventTime(event.start)} – `}
-                              <span className="text-foreground font-medium">{event.summary}</span>
+                              {!allDay && <span className="text-foreground">{formatEventTime(event.start)} – </span>}
+                              {event.summary}
                             </p>
                           </div>
                         );
