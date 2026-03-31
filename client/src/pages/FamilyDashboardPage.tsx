@@ -232,81 +232,55 @@ export default function FamilyDashboardPage() {
             </div>
           )}
 
-          <Card className="overflow-hidden">
-            <CardContent className="p-0">
-              <div className="flex">
-                {/* LEFT PANEL — date heading + event list (narrower) */}
-                <div className="w-[42%] p-3 pr-2 border-r border-border overflow-hidden">
-                  <h2 className="text-xs font-bold mb-2 leading-tight text-muted-foreground uppercase tracking-wide">
-                    {format(today, "EEEE, d MMMM")}
-                  </h2>
-
-                  {upcomingDays.slice(0, 2).map(({ date, label, dayEvents }) => {
-                    if (!isToday(date) && dayEvents.length === 0) return null;
-                    return (
-                      <div key={label} className="mb-2 last:mb-0">
-                        <p className="text-[9px] font-bold tracking-widest text-muted-foreground mb-1">
-                          {label}
-                        </p>
-                        {dayEvents.length === 0 ? (
-                          <p className="text-[11px] text-muted-foreground italic pl-2">Etkinlik yok</p>
-                        ) : (
-                          <div className="space-y-1.5">
-                            {dayEvents.map((event) => {
-                              const color = getEventColor(globalEventIndex++);
-                              const allDay = isAllDay(event);
-                              return (
-                                <div key={event.id} className="flex items-start gap-2">
-                                  <div
-                                    className="w-[3px] rounded-full self-stretch min-h-[20px] flex-shrink-0"
-                                    style={{ backgroundColor: color }}
-                                  />
-                                  <div className="min-w-0">
-                                    <p className="text-xs font-semibold leading-tight truncate">
-                                      {event.summary}
-                                    </p>
-                                    <p className="text-[10px] text-muted-foreground">
-                                      {allDay ? "Tüm gün" : `${formatEventTime(event.start)} – ${formatEventTime(event.end)}`}
-                                    </p>
-                                  </div>
+          <div className="overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-gradient-to-br from-white to-blue-50/60 dark:from-slate-800 dark:to-slate-900 shadow-[0_8px_32px_rgba(60,80,160,0.13),0_2px_8px_rgba(60,80,160,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <div className="flex">
+              {/* LEFT PANEL — date + event list */}
+              <div className="w-[42%] p-3 pr-2 border-r border-slate-200/70 dark:border-white/10 overflow-hidden">
+                <h2 className="text-xs font-bold mb-2 leading-tight text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+                  {format(today, "EEEE, d MMMM")}
+                </h2>
+                {upcomingDays.slice(0, 2).map(({ date, label, dayEvents }) => {
+                  if (!isToday(date) && dayEvents.length === 0) return null;
+                  return (
+                    <div key={label} className="mb-2 last:mb-0">
+                      <p className="text-[9px] font-bold tracking-widest text-slate-400 dark:text-slate-500 mb-1">{label}</p>
+                      {dayEvents.length === 0 ? (
+                        <p className="text-[11px] text-slate-400 italic pl-2">Etkinlik yok</p>
+                      ) : (
+                        <div className="space-y-1.5">
+                          {dayEvents.map((event) => {
+                            const color = getEventColor(globalEventIndex++);
+                            const allDay = isAllDay(event);
+                            return (
+                              <div key={event.id} className="flex items-start gap-2">
+                                <div
+                                  className="w-[3px] rounded-full self-stretch min-h-[20px] flex-shrink-0"
+                                  style={{ backgroundColor: color }}
+                                />
+                                <div className="min-w-0">
+                                  <p className="text-xs font-semibold leading-tight truncate text-slate-800 dark:text-slate-100">
+                                    {event.summary}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 dark:text-slate-500">
+                                    {allDay ? "Tüm gün" : `${formatEventTime(event.start)} – ${formatEventTime(event.end)}`}
+                                  </p>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* RIGHT PANEL — mini monthly calendar + today's events legend (wider) */}
-                <div className="flex-1 p-3 flex flex-col gap-2">
-                  <MiniCalendar today={today} />
-
-                  {todayEvents.length > 0 && (
-                    <div className="space-y-0.5 pt-1.5 border-t border-border">
-                      {todayEvents.map((event, i) => {
-                        const color = getEventColor(i);
-                        const allDay = isAllDay(event);
-                        return (
-                          <div key={event.id} className="flex items-center gap-1.5 min-w-0">
-                            <div
-                              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: color }}
-                            />
-                            <p className="text-[10px] text-muted-foreground leading-tight truncate">
-                              {!allDay && <span className="text-foreground">{formatEventTime(event.start)} – </span>}
-                              {event.summary}
-                            </p>
-                          </div>
-                        );
-                      })}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                  );
+                })}
               </div>
-            </CardContent>
-          </Card>
+
+              {/* RIGHT PANEL — mini monthly calendar only */}
+              <div className="flex-1 p-3">
+                <MiniCalendar today={today} />
+              </div>
+            </div>
+          </div>
         </section>
 
         <section data-testid="section-weather">
