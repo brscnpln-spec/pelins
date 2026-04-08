@@ -166,6 +166,8 @@ function MiniCalendar({ today }: { today: Date }) {
 }
 
 function isBirthdayToday(): boolean {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("dogumgunu") === "1") return true;
   const now = new Date();
   return now.getMonth() === 3 && now.getDate() === 9; // April 9
 }
