@@ -1,0 +1,149 @@
+I already have a home dashboard app running in Replit, and it is displayed in a browser on a Raspberry Pi.
+
+I want you to revise the EXISTING dashboard design for a special one-day event:
+
+EVENT
+- This dashboard should turn into a birthday celebration screen ONLY for April 9.
+- The birthday child’s name is KEREM.
+- Kerem is turning 7 years old.
+- He loves dinosaurs.
+
+GOAL
+Transform the current dashboard into a playful, joyful, polished birthday version for April 9, while keeping it stable and easy to display full-screen on a Raspberry Pi browser.
+
+IMPORTANT
+- Do NOT build a brand new app from scratch.
+- Do NOT change the core project structure unless necessary.
+- Reuse the existing dashboard and restyle/restructure it into a birthday celebration experience.
+- Optimize for fullscreen landscape display.
+- Make everything large, readable, and visually strong from a distance.
+- The page should feel magical, cheerful, warm, and kid-friendly.
+- The design should feel like a dinosaur birthday party, not a generic party page.
+
+DESIGN DIRECTION
+Create a birthday dashboard that feels:
+- playful
+- colorful
+- friendly
+- exciting
+- polished
+- easy to read at a glance
+
+Visual style:
+- dinosaur-themed hero section
+- fun but clean layout
+- large typography
+- rounded cards
+- festive details
+- subtle motion only
+- no clutter
+- no tiny text
+- no overcomplicated widgets
+
+COLOR + MOOD
+Use a vibrant, kid-friendly palette inspired by:
+- dinosaur green
+- jungle green
+- sunny yellow
+- sky blue
+- warm orange
+- optional small accent colors like red or purple
+
+Avoid:
+- dark corporate dashboard look
+- overly minimal boring design
+- messy rainbow overload
+- tiny dense information blocks
+
+CONTENT TO SHOW
+Please redesign the dashboard to include these birthday-focused sections:
+
+1. Main hero area
+- Big birthday headline:
+  “İyi ki doğdun KEREM!”
+- Strong subheadline:
+  “Kerem 7 yaşında!”
+- Add a short dinosaur-themed celebratory line in Turkish.
+  Example tone: fun, cute, cheerful.
+
+2. Age spotlight
+- A large, visually exciting number “7”
+- Make it a central decorative element
+- It should feel special and celebratory
+
+3. Dinosaur celebration visuals
+- Add decorative dinosaur elements or illustrations/icons in the UI
+- Friendly dinosaurs, not scary dinosaurs
+- Use shapes, footprints, jungle leaves, eggs, volcano silhouettes, clouds, balloons, confetti, or party elements where appropriate
+- Keep it tasteful and visually balanced
+
+4. Birthday message section
+- Show a warm short birthday note for Kerem in Turkish
+- Tone should be loving, cheerful, encouraging, and child-friendly
+
+5. Celebration widgets or cards
+Create a few large birthday-themed cards such as:
+- Dino Party Time
+- Kerem 7 Yaşında
+- Bugün Kutlama Günü
+- Mutlu Doğum Günü
+These can be decorative/info cards rather than data-heavy dashboard cards
+
+6. Optional fun details
+If it fits well, include:
+- animated confetti
+- floating balloons
+- subtle dinosaur footprints
+- soft moving leaves/clouds
+- gentle shine or glow effects
+But keep animations lightweight and not distracting
+
+DATE-BASED BEHAVIOR
+This is very important:
+- The birthday design should appear only on April 9.
+- Outside April 9, the dashboard should return to the normal/default design.
+- Implement this cleanly and clearly in the project.
+- If a birthday mode toggle is easier for testing, you may add a simple temporary dev toggle, but the real logic should be based on April 9.
+
+RESPONSIVENESS + DEVICE CONTEXT
+This runs on a Raspberry Pi browser, so:
+- optimize for fullscreen display
+- prioritize large spacing and strong readability
+- avoid small buttons or tiny text
+- avoid layout shifts
+- keep performance smooth
+- avoid heavy libraries unless truly needed
+
+TYPOGRAPHY
+- Use large bold headings
+- Make “KEREM” and “7” especially prominent
+- High contrast
+- Easy to read from a few meters away
+
+UX RULES
+- Keep it simple and delightful
+- At a glance, anyone should instantly understand:
+  this is Kerem’s dinosaur-themed 7th birthday screen
+- Do not overload the page with too much text or too many sections
+- Prioritize visual impact and emotional warmth
+
+MICROCOPY
+Write all visible text in Turkish.
+
+DELIVERABLES
+Please:
+1. inspect the existing dashboard structure
+2. update the current page into this April 9 birthday version
+3. preserve maintainability
+4. add any needed styling, sections, and lightweight animations
+5. implement the April 9 conditional logic
+6. explain what files you changed
+7. keep the result production-clean and visually polished
+
+FINAL QUALITY BAR
+The result should feel like:
+- a premium but playful birthday dashboard
+- made especially for Kerem
+- dinosaur-loving child aesthetic
+- emotionally warm
+- clear, big, festive, and fullscreen-friendly

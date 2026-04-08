@@ -14,6 +14,7 @@ import {
 import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
 import ThemeToggle from "@/components/ThemeToggle";
+import BirthdayDashboard from "@/components/BirthdayDashboard";
 import { Card, CardContent } from "@/components/ui/card";
 import { RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -164,25 +165,39 @@ function MiniCalendar({ today }: { today: Date }) {
   );
 }
 
+function isBirthdayToday(): boolean {
+  const now = new Date();
+  return now.getMonth() === 3 && now.getDate() === 9; // April 9
+}
+
 export default function FamilyDashboardPage() {
+  const birthday = isBirthdayToday();
+
   useEffect(() => {
+    if (birthday) return;
     if (!document.getElementById("weatherwidget-io-js")) {
       const script = document.createElement("script");
       script.id = "weatherwidget-io-js";
       script.src = "https://weatherwidget.io/js/widget.min.js";
       document.body.appendChild(script);
     }
-  }, []);
+  }, [birthday]);
 
   const { data: calendarData, isLoading: calendarLoading } = useQuery<{ events: CalendarEvent[] }>({
     queryKey: ["/api/dashboard/calendar"],
     refetchInterval: 60000,
+    enabled: !birthday,
   });
 
   const { data: homeData } = useQuery<HomeStatusResponse>({
     queryKey: ["/api/dashboard/home-status"],
     refetchInterval: 30000,
+    enabled: !birthday,
   });
+
+  if (birthday) {
+    return <BirthdayDashboard />;
+  }
 
   const events = calendarData?.events || [];
   const homeEntities = homeData?.entities || [];
