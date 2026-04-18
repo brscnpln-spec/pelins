@@ -172,8 +172,15 @@ function isBirthdayToday(): boolean {
   return now.getMonth() === 3 && now.getDate() === 9; // April 9
 }
 
+const AUTO_REFRESH_MS = 30 * 60 * 1000; // 30 minutes
+
 export default function FamilyDashboardPage() {
   const birthday = isBirthdayToday();
+
+  useEffect(() => {
+    const timer = setTimeout(() => window.location.reload(), AUTO_REFRESH_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (birthday) return;
