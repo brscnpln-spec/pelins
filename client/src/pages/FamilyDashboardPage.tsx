@@ -235,7 +235,7 @@ export default function FamilyDashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground tabular-nums" data-testid="text-last-refreshed">
-            {lastRefreshed}
+            Last Update: {lastRefreshed}
           </span>
           <Button
             size="icon"
