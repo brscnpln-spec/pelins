@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   format,
@@ -176,6 +176,7 @@ const AUTO_REFRESH_MS = 30 * 60 * 1000; // 30 minutes
 
 export default function FamilyDashboardPage() {
   const birthday = isBirthdayToday();
+  const [lastRefreshed] = useState(() => format(new Date(), "HH:mm"));
 
   useEffect(() => {
     const timer = setTimeout(() => window.location.reload(), AUTO_REFRESH_MS);
@@ -233,6 +234,9 @@ export default function FamilyDashboardPage() {
           <p className="text-xs text-muted-foreground">{format(new Date(), "EEEE, d MMMM")}</p>
         </div>
         <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground tabular-nums" data-testid="text-last-refreshed">
+            {lastRefreshed}
+          </span>
           <Button
             size="icon"
             variant="ghost"
