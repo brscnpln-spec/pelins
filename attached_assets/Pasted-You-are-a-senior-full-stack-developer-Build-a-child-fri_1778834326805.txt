@@ -1,0 +1,217 @@
+You are a senior full-stack developer. Build a child-friendly “Daily Dinosaur Duel” feature for an existing Raspberry Pi touchscreen home dashboard.
+
+Context:
+- The dashboard already shows calendar and Munich weather.
+- There is empty space below the weather area.
+- Add a new widget/component in that lower empty area.
+- Target user is a child named Kerem.
+- No AI integration should be required.
+- The duel must change automatically once per day.
+- The UI must work well on a Raspberry Pi touchscreen.
+
+Feature name:
+Daily Dinosaur Duel
+
+Main flow:
+1. Show today’s duel in the lower dashboard area.
+   Example:
+   “Today’s Dino Duel”
+   “T. rex vs Diplodocus”
+2. Both dinosaur names must be large, clear, and tappable.
+3. Kerem taps one dinosaur as his guess.
+4. After tapping, show a short duel animation for 3–5 seconds.
+5. If the selected dinosaur is the correct winner:
+   - Show positive child-friendly feedback.
+   - Example: “Correct! T. rex wins this duel! 🦖”
+6. If the selected dinosaur is wrong:
+   - Show gentle, cute negative feedback.
+   - Example: “Good try! Diplodocus is huge, but today T. rex had the advantage. 🦕”
+7. After the guess, lock the duel until the next calendar day.
+8. Until the next day, show the result state:
+   - Today’s duel
+   - Kerem’s selected dinosaur
+   - Correct winner
+   - Short explanation
+   - “New duel tomorrow”
+
+Important rules:
+- Do not use OpenAI or any external AI API.
+- Use a local predefined duel list.
+- The daily duel should be selected deterministically based on the current date.
+- The same day must always show the same duel.
+- Store the user’s daily answer in localStorage.
+- If the page refreshes, the result must remain visible.
+- At midnight/local date change, a new duel becomes available.
+- The widget must be offline-friendly.
+- No backend is required unless the existing app already has one.
+
+Data model:
+Create a local array of duel objects like this:
+
+{
+  id: "trex-vs-diplodocus",
+  dinoA: "T. rex",
+  dinoB: "Diplodocus",
+  winner: "T. rex",
+  explanationCorrect: "Correct! T. rex was a powerful predator with a massive bite.",
+  explanationWrong: "Good try! Diplodocus was enormous, but T. rex had the stronger attack in this duel.",
+  funFact: "T. rex had one of the strongest bites of any land animal."
+}
+
+Add at least 30 duels so the feature can rotate for a month.
+
+Use child-friendly but reasonably realistic outcomes. Avoid scary, violent, bloody, or aggressive wording. Use words like:
+- advantage
+- stronger defense
+- faster
+- bigger
+- clever hunter
+- protected by armor
+- powerful bite
+
+Do not use:
+- killed
+- blood
+- destroyed
+- ripped apart
+- violent descriptions
+
+Suggested duel examples:
+- T. rex vs Diplodocus → T. rex
+- Ankylosaurus vs Allosaurus → Ankylosaurus
+- Triceratops vs Velociraptor → Triceratops
+- Spinosaurus vs Carnotaurus → Spinosaurus
+- Stegosaurus vs Ceratosaurus → Stegosaurus
+- Brachiosaurus vs Velociraptor → Brachiosaurus
+- Utahraptor vs Gallimimus → Utahraptor
+- Therizinosaurus vs T. rex → T. rex
+- Pachycephalosaurus vs Troodon → Pachycephalosaurus
+- Iguanodon vs Dilophosaurus → Iguanodon
+- Kentrosaurus vs Allosaurus → Kentrosaurus
+- Parasaurolophus vs Velociraptor → Parasaurolophus
+- Quetzalcoatlus vs Velociraptor → Quetzalcoatlus
+- Giganotosaurus vs Stegosaurus → Giganotosaurus
+- Carnotaurus vs Ankylosaurus → Ankylosaurus
+- Deinonychus vs Gallimimus → Deinonychus
+- Styracosaurus vs Dilophosaurus → Styracosaurus
+- Baryonyx vs Iguanodon → Baryonyx
+- Suchomimus vs Carnotaurus → Suchomimus
+- Albertosaurus vs Protoceratops → Albertosaurus
+- Euoplocephalus vs Ceratosaurus → Euoplocephalus
+- Majungasaurus vs Ouranosaurus → Majungasaurus
+- Acrocanthosaurus vs Parasaurolophus → Acrocanthosaurus
+- Torosaurus vs Utahraptor → Torosaurus
+- Dreadnoughtus vs Allosaurus → Dreadnoughtus
+- Megalosaurus vs Camptosaurus → Megalosaurus
+- Plateosaurus vs Coelophysis → Plateosaurus
+- Sinraptor vs Kentrosaurus → Kentrosaurus
+- Tarbosaurus vs Saurolophus → Tarbosaurus
+- Edmontosaurus vs Troodon → Edmontosaurus
+
+Daily selection logic:
+- Get today’s local date as YYYY-MM-DD.
+- Convert the date into a stable number.
+- Use modulo with the duel list length.
+- Example logic:
+  const todayKey = new Date().toLocaleDateString("en-CA");
+  const dayNumber = todayKey.replaceAll("-", "");
+  const index = Number(dayNumber) % DUELS.length;
+  const todayDuel = DUELS[index];
+
+Storage logic:
+- localStorage key should include today’s date:
+  dino-duel-result-YYYY-MM-DD
+- Store:
+  {
+    duelId,
+    selected,
+    winner,
+    isCorrect,
+    answeredAt
+  }
+
+UI requirements:
+- Dark dashboard-friendly design.
+- Must visually match a modern dark Raspberry Pi dashboard.
+- Use rounded cards, large text, and high contrast.
+- Use orange/yellow accent for the active duel.
+- Use green for correct feedback.
+- Use soft blue/purple for “good try” feedback.
+- Dinosaur buttons must be large enough for a child to tap.
+- The result state should be readable from 2–3 meters away.
+- Add emojis, but not too many.
+- Recommended icons/emojis:
+  🦖 🦕 ⚡ ⭐ 🛡️
+
+Animation:
+When the user taps a dinosaur:
+- Show a 3–5 second animation state.
+- Animation can be implemented with CSS only.
+- Example:
+  - two dinosaur emojis slide toward the center
+  - a small “VS” pulse
+  - dust/cloud emoji or sparkle effect
+  - then reveal result
+- Keep it lightweight for Raspberry Pi performance.
+- No heavy libraries unless already installed.
+- Prefer CSS animations.
+
+Component states:
+1. Unanswered:
+   - title: “Daily Dino Duel”
+   - subtitle: “Who has the advantage today?”
+   - two tappable dinosaur cards
+   - small text: “Choose one!”
+2. Animating:
+   - title: “Duel in progress…”
+   - animated dinosaur emojis/cards
+   - disable all buttons
+3. Answered:
+   - title: if correct: “Correct choice!”
+   - title: if wrong: “Good try!”
+   - show:
+     - selected dinosaur
+     - winner
+     - explanation
+     - fun fact
+     - “New duel tomorrow”
+
+Touch behavior:
+- Buttons must support touch/click.
+- Add active/pressed visual state.
+- Prevent double taps from submitting twice.
+- During animation, ignore additional taps.
+
+Implementation:
+- First inspect the existing project structure.
+- Identify the frontend framework.
+- If React is used, create a reusable component:
+  DailyDinoDuel.jsx or DailyDinoDuel.tsx
+- If plain HTML/CSS/JS is used, create:
+  dailyDinoDuel.js
+  dailyDinoDuel.css
+- Integrate it into the existing dashboard lower empty area.
+- Do not break existing calendar/weather functionality.
+- Keep all data local in the component/file.
+
+Acceptance criteria:
+- Today’s duel appears in the empty area below the weather widget.
+- Both dinosaur names are tappable.
+- Tapping starts a visible duel animation.
+- Correct answer shows positive feedback.
+- Wrong answer shows gentle feedback.
+- The result stays visible after refresh.
+- The same duel remains locked for the rest of the day.
+- A new duel appears automatically on the next day.
+- Works offline.
+- Works on Raspberry Pi touchscreen.
+- No AI integration or paid API is needed.
+- Code is clean, readable, and easy to extend.
+
+Bonus:
+Add a small “Dino Fact of the Day” line in the answered state.
+Add a hidden developer reset shortcut for testing:
+- Press keyboard key “R” while the widget is focused
+- Clear today’s localStorage result
+- Return to unanswered state
+- Only for local testing

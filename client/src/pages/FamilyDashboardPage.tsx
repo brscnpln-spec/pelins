@@ -15,6 +15,7 @@ import BottomNav from "@/components/BottomNav";
 import DigitalClock from "@/components/DigitalClock";
 import ThemeToggle from "@/components/ThemeToggle";
 import BirthdayDashboard from "@/components/BirthdayDashboard";
+import DailyDinoDuel from "@/components/DailyDinoDuel";
 import { Card, CardContent } from "@/components/ui/card";
 import { RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -326,6 +327,10 @@ export default function FamilyDashboardPage() {
               </a>
             </CardContent>
           </Card>
+        </section>
+
+        <section data-testid="section-dino-duel">
+          <DailyDinoDuel />
         </section>
 
         {homeConfigured && homeEntities.length > 0 && (
