@@ -467,12 +467,21 @@ export default function DailyDinoDuel() {
 
   const [state, setState] = useState<DuelState>(() => {
     const stored = localStorage.getItem(getStorageKey());
-    return stored ? "answered" : "idle";
+    if (!stored) return "idle";
+    const parsed: StoredResult = JSON.parse(stored);
+    if (parsed.duelId !== duel.id) {
+      localStorage.removeItem(getStorageKey());
+      return "idle";
+    }
+    return "answered";
   });
 
   const [result, setResult] = useState<StoredResult | null>(() => {
     const stored = localStorage.getItem(getStorageKey());
-    return stored ? JSON.parse(stored) : null;
+    if (!stored) return null;
+    const parsed: StoredResult = JSON.parse(stored);
+    if (parsed.duelId !== duel.id) return null;
+    return parsed;
   });
 
   const [selected, setSelected] = useState<string | null>(null);
